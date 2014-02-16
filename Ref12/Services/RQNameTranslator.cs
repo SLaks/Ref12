@@ -19,6 +19,11 @@ namespace SLaks.Ref12.Services {
 			if (member != null)
 				return ToIndexId(member);
 
+			// IndexIds use the parameter name, which we can't get.  (plus, it doesn't work anyway)
+			var memberParam = parsed as RQMemberParameterIndex;
+			if (memberParam != null)
+				return ToIndexId(memberParam.ContainingMember);
+
 			return null;
 		}
 		static string ToIndexId(RQMember member) {
