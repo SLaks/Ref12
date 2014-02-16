@@ -40,7 +40,7 @@ namespace SLaks.Ref12.Commands {
 			if (!TextDocumentFactoryService.TryGetTextDocument(textView.TextDataModel.DocumentBuffer, out document))
 				return;
 
-			textView.Properties.GetOrCreateSingletonProperty(() => new GoToDefinitionInterceptor(ReferenceProviders, ServiceProvider, textViewAdapter, textView, document));
+			textView.Properties.GetOrCreateSingletonProperty(() => new GoToDefinitionInterceptor(ReferenceProviders, textViewAdapter, textView, document));
 		}
 		public void SubjectBuffersDisconnected(IWpfTextView textView, ConnectionReason reason, Collection<ITextBuffer> subjectBuffers) {
 		}

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using EnvDTE;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
@@ -13,12 +12,10 @@ using SLaks.Ref12.Services;
 namespace SLaks.Ref12.Commands {
 	class GoToDefinitionInterceptor : CommandTargetBase<VSConstants.VSStd97CmdID> {
 		readonly IEnumerable<IReferenceSourceProvider> references;
-		readonly DTE dte;
 		readonly ITextDocument doc;
 
-		public GoToDefinitionInterceptor(IEnumerable<IReferenceSourceProvider> references, IServiceProvider sp, IVsTextView adapter, IWpfTextView textView, ITextDocument doc) : base(adapter, textView, VSConstants.VSStd97CmdID.GotoDefn) {
+		public GoToDefinitionInterceptor(IEnumerable<IReferenceSourceProvider> references, IVsTextView adapter, IWpfTextView textView, ITextDocument doc) : base(adapter, textView, VSConstants.VSStd97CmdID.GotoDefn) {
 			this.references = references;
-			dte = (DTE)sp.GetService(typeof(DTE));
 			this.doc = doc;
 		}
 
@@ -30,8 +27,6 @@ namespace SLaks.Ref12.Commands {
 			if (caretPoint == null)
 				return false;
 
-			var project = dte.Solution.FindProjectItem(doc.FilePath).ContainingProject;
-
 			var dl = LanguageUtilities.GetGoToDefLocations(caretPoint.Value, doc).FirstOrDefault();
 			if (dl == null || !dl.IsMetadata)
 				return false;
@@ -42,7 +37,6 @@ namespace SLaks.Ref12.Commands {
 				return false;
 
 			Debug.WriteLine("Navigating to RQName " + dl.RQName);
-			Debug.WriteLine(string.Join("\n", dte.ContextAttributes.Cast<ContextAttribute>().Select(c => c.Name + ": " + c.Values)));
 
 			target.Navigate(assembly, dl.RQName);
 			return true;
