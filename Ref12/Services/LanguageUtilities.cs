@@ -6,6 +6,11 @@ using Microsoft.VisualStudio.Text;
 
 namespace SLaks.Ref12.Services {
 	static class LanguageUtilities {
+		static LanguageUtilities() {
+			AssemblyRedirector.TargetNames.Add("Microsoft.VisualStudio.CSharp.Services.Language");
+			AssemblyRedirector.TargetNames.Add("Microsoft.VisualStudio.CSharp.Services.Language.Interop");
+		}
+
 		public static bool IsRunning() {
 			bool result;
 			NativeMethods.LangService_ServiceIsRunning(out result);
@@ -53,7 +58,8 @@ namespace SLaks.Ref12.Services {
 
 	// Fields cannot use types from Microsoft.VisualStudio.CSharp.Services.Language.dll,
 	// because my DLL is loaded before it, and it has no <bindingRedirect>s. Using these
-	// types in local variables is perfectly fine.
+	// types in local variables works fine, since we handle AssemblyResolve and load the
+	// correct version before those methods are JITted.
 	class GoToDefLocation {
 		public string FileName { get; private set; }
 		public string RQName { get; private set; }

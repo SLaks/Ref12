@@ -15,6 +15,11 @@ using Microsoft.VisualStudio.Text;
 
 namespace SLaks.Ref12.Services {
 	static class ParseTreeUtilities {
+		static ParseTreeUtilities() {
+			AssemblyRedirector.TargetNames.Add("Microsoft.VisualStudio.CSharp.Services.Language");
+			AssemblyRedirector.TargetNames.Add("Microsoft.VisualStudio.CSharp.Services.Language.Interop");
+		}
+
 		private static readonly Lazy<IDECompilerHost> compilerHost = new Lazy<IDECompilerHost>();
 
 		public static NativeMethods.FindSourceDefinitionsAndDetermineSymbolResult GetNode(SnapshotPoint point, Project project, string fileName) {
@@ -36,7 +41,8 @@ namespace SLaks.Ref12.Services {
 
 		// Fields cannot use types from Microsoft.VisualStudio.CSharp.Services.Language.dll,
 		// because my DLL is loaded before it, and it has no <bindingRedirect>s. Using these
-		// types in local variables is perfectly fine.
+		// types in local variables works fine, since we handle AssemblyResolve and load the
+		// correct version before those methods are JITted.
 		internal class SourceDefinitionOutputs : NodeAndFileNameArrayOutputs {
 			//public NamedSymbolKind definitionKind;
 			public int hasExternalVisibility;
