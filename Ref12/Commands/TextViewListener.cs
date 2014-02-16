@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
 using System.Linq;
+using System.Windows.Threading;
 using Microsoft.VisualStudio.Editor;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Text;
@@ -26,12 +27,15 @@ namespace SLaks.Ref12.Commands {
 		[Import]
 		public ITextDocumentFactoryService TextDocumentFactoryService { get; set; }
 
-		public void SubjectBuffersConnected(IWpfTextView textView, ConnectionReason reason, Collection<ITextBuffer> subjectBuffers) {
+		public async void SubjectBuffersConnected(IWpfTextView textView, ConnectionReason reason, Collection<ITextBuffer> subjectBuffers) {
 			if (RoslynUtilities.IsRoslynInstalled(ServiceProvider))
 				return;
 
 			if (!subjectBuffers.Any(b => b.ContentType.IsOfType("CSharp") || b.ContentType.IsOfType("Basic")))
 				return;
+
+			// VS2010 only creates TextViewAdapters later; wait for it to exist.
+			await Dispatcher.Yield();
 
 			var textViewAdapter = EditorAdaptersFactoryService.GetViewAdapter(textView);
 			if (textViewAdapter == null)
