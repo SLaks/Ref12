@@ -11,12 +11,12 @@
 		<Locale>1033</Locale>
 		<SupportedFrameworkRuntimeEdition MinVersion="4.5" MaxVersion="6.0"/>
 		<SupportedProducts>
-			<VisualStudio Version="10.0">
+			<!--<VisualStudio Version="10.0">
 				<Edition>Pro</Edition>
 			</VisualStudio>
 			<VisualStudio Version="11.0">
 				<Edition>Pro</Edition>
-			</VisualStudio>
+			</VisualStudio>-->
 			<VisualStudio Version="12.0">
 				<Edition>Pro</Edition>
 			</VisualStudio>
