@@ -34,8 +34,11 @@ namespace SLaks.Ref12.Services {
 	static partial class NativeMethods {
 		static bool ToBool(this int boolAsInt) { return boolAsInt != 0; }
 
+		// Fields cannot use types from Microsoft.VisualStudio.CSharp.Services.Language.dll,
+		// because my DLL is loaded before it, and it has no <bindingRedirect>s. Using these
+		// types in local variables is perfectly fine.
 		internal class SourceDefinitionOutputs : NodeAndFileNameArrayOutputs {
-			public NamedSymbolKind definitionKind;
+			//public NamedSymbolKind definitionKind;
 			public int hasExternalVisibility;
 		}
 		internal class NodeAndFileNameArrayOutputs {
@@ -48,25 +51,25 @@ namespace SLaks.Ref12.Services {
 			public string RQNameForParameterFromOtherPartialMethod;
 			public string assemblyName;
 			public string[] namespaceDefiningAssemblies;
-			public ParseTree.Handle anonymousTypePropertyRefOwnerHandle;
+			//public ParseTree.Handle anonymousTypePropertyRefOwnerHandle;
 			public IntPtr anonymousTypePropertyRefNodePointer;
 			public int[] anonymousTypePropertyReferenceToSelfArray;
 		}
 		internal class FindSourceDefinitionsResult {
-			public readonly NamedSymbolKind DefinitionKind;
+			//public readonly NamedSymbolKind DefinitionKind;
 			public readonly bool HasExternalVisibility;
-			public readonly ReadOnlyCollection<FileName> DefinitionFiles;
+			public readonly ReadOnlyCollection<string> DefinitionFiles;
 			public FindSourceDefinitionsResult(IDECompilation compilation, SourceDefinitionOutputs outputs) {
-				DefinitionKind = outputs.definitionKind;
+				//DefinitionKind = outputs.definitionKind;
 				HasExternalVisibility = outputs.hasExternalVisibility.ToBool();
-				DefinitionFiles = outputs.fileNames.Select(f => new FileName(f)).ToList().AsReadOnly();
+				DefinitionFiles = new ReadOnlyCollection<string>(outputs.fileNames);
 			}
 		}
 		internal class FindSourceDefinitionsAndDetermineSymbolResult : FindSourceDefinitionsResult {
 			public readonly string RQName;
 			public readonly string RQNameForParameterFromOtherPartialMethod;
 			public readonly string AssemblyName;
-			public readonly ReadOnlyCollection<FileName> NamespaceDefiningAssemblies;
+			public readonly ReadOnlyCollection<string> NamespaceDefiningAssemblies;
 			public readonly IList<bool> AnonymousTypePropertyReferenceToSelf;
 			internal FindSourceDefinitionsAndDetermineSymbolResult(IDECompilation compilation, SourceDefinitionOutputs helper, SymbolInfoHolder symbolInfo) : base(compilation, helper) {
 				RQName = symbolInfo.rqName;
@@ -77,8 +80,7 @@ namespace SLaks.Ref12.Services {
 					AnonymousTypePropertyReferenceToSelf =
 						symbolInfo.anonymousTypePropertyReferenceToSelfArray.Select(ToBool).ToList();
 				}
-				NamespaceDefiningAssemblies =
-					symbolInfo.namespaceDefiningAssemblies.Select(f => new FileName(f)).ToList().AsReadOnly();
+				NamespaceDefiningAssemblies = new ReadOnlyCollection<string>(symbolInfo.namespaceDefiningAssemblies);
 			}
 		}
 
@@ -89,16 +91,20 @@ namespace SLaks.Ref12.Services {
 		internal static FindSourceDefinitionsAndDetermineSymbolResult FindSourceDefinitionsAndDetermineSymbolFromParseTree(IDECompilation compilation, IRefactorProgressUI progressUI, ParseTreeNode parseTreeNode) {
 			SourceDefinitionOutputs sourceDefinitionOutputs = new SourceDefinitionOutputs();
 			SymbolInfoHolder symbolInfoHolder = new SymbolInfoHolder();
+
+			ParseTree.Handle anonymousTypePropertyRefOwnerHandle;
+			NamedSymbolKind definitionKind;
+
 			Refactoring_FindSourceDefinitionsAndDetermineSymbolFromParseTree(
 				CompilationHandle(compilation),
 				progressUI,
 				ParseTreeNodePointer(parseTreeNode),
-				out sourceDefinitionOutputs.definitionKind,
+				out definitionKind,
 				out symbolInfoHolder.rqName,
 				out symbolInfoHolder.RQNameForParameterFromOtherPartialMethod,
 				out symbolInfoHolder.assemblyName,
 				out symbolInfoHolder.namespaceDefiningAssemblies,
-				out symbolInfoHolder.anonymousTypePropertyRefOwnerHandle,
+				out anonymousTypePropertyRefOwnerHandle,
 				out symbolInfoHolder.anonymousTypePropertyRefNodePointer,
 				out sourceDefinitionOutputs.hasExternalVisibility,
 				out sourceDefinitionOutputs.fileNames,
