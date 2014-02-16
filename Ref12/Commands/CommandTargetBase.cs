@@ -9,13 +9,13 @@ using Microsoft.VisualStudio.TextManager.Interop;
 namespace SLaks.Ref12.Commands {
 	internal abstract class CommandTargetBase<TCommandEnum> : IOleCommandTarget where TCommandEnum : struct, IComparable {
 		private IOleCommandTarget nextCommandTarget;
-		protected readonly IWpfTextView TextView;
+		protected readonly ITextView TextView;
 
 		public Guid CommandGroup { get; set; }
 		public ReadOnlyCollection<uint> CommandIds { get; private set; }
 
-		public CommandTargetBase(IVsTextView adapter, IWpfTextView textView, params TCommandEnum[] commandIds) : this(adapter, textView, typeof(TCommandEnum).GUID, Array.ConvertAll(commandIds, e => Convert.ToUInt32(e))) { }
-		public CommandTargetBase(IVsTextView adapter, IWpfTextView textView, Guid commandGroup, params uint[] commandIds) {
+		public CommandTargetBase(IVsTextView adapter, ITextView textView, params TCommandEnum[] commandIds) : this(adapter, textView, typeof(TCommandEnum).GUID, Array.ConvertAll(commandIds, e => Convert.ToUInt32(e))) { }
+		public CommandTargetBase(IVsTextView adapter, ITextView textView, Guid commandGroup, params uint[] commandIds) {
 			CommandGroup = commandGroup;
 			CommandIds = new ReadOnlyCollection<uint>(commandIds);
 			TextView = textView;
