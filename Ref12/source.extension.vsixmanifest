@@ -3,7 +3,7 @@
 	<Identifier Id="bfc869c4-ae0f-467a-86a4-5d9401303490">
 		<Name>Ref12</Name>
 		<Author>SLaks</Author>
-		<Version>1.0.0</Version>
+		<Version>1.1</Version>
 		<Description xml:space="preserve">Forwards F12 to ReferenceSource.Microsoft.com instead of showing metadata.</Description>
 		<Icon>Resources\Ref12-32.png</Icon>
 		<PreviewImage>Resources\Ref12-200.png</PreviewImage>
@@ -11,12 +11,12 @@
 		<Locale>1033</Locale>
 		<SupportedFrameworkRuntimeEdition MinVersion="4.5" MaxVersion="6.0"/>
 		<SupportedProducts>
-			<!--<VisualStudio Version="10.0">
+			<VisualStudio Version="10.0">
 				<Edition>Pro</Edition>
 			</VisualStudio>
 			<VisualStudio Version="11.0">
 				<Edition>Pro</Edition>
-			</VisualStudio>-->
+			</VisualStudio>
 			<VisualStudio Version="12.0">
 				<Edition>Pro</Edition>
 			</VisualStudio>

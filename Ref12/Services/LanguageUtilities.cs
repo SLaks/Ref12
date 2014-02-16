@@ -23,14 +23,14 @@ namespace SLaks.Ref12.Services {
 			return new Position(containingLine.LineNumber, charIndex);
 		}
 
-		public static IEnumerable<GoToDefLocation> GetGoToDefLocations(SnapshotPoint triggerPoint, ITextDocument document) {
+		public static IEnumerable<GoToDefLocation> GetGoToDefLocations(SnapshotPoint triggerPoint, string sourceFileName) {
 			Position position = ToCSharpPosition(triggerPoint, null);
 
 			string[] fileNames, rqNames, assemblyBinaryNames;
 			int[] lines, columns;
 			bool[] isMetaDataFlags;
 			try {
-				NativeMethods.GoToDefinition_GetLocations(position.Line, position.Character, document.FilePath, out fileNames, out lines, out columns, out rqNames, out assemblyBinaryNames, out isMetaDataFlags);
+				NativeMethods.GoToDefinition_GetLocations(position.Line, position.Character, sourceFileName, out fileNames, out lines, out columns, out rqNames, out assemblyBinaryNames, out isMetaDataFlags);
 			} catch (InvalidOperationException) {
 				yield break;
 			}
@@ -45,7 +45,7 @@ namespace SLaks.Ref12.Services {
 		}
 
 	}
-	static class NativeMethods {
+	static partial class NativeMethods {
 		[DllImport("CSLangSvc.dll", PreserveSig = false)]
 		internal static extern void LangService_ServiceIsRunning([MarshalAs(UnmanagedType.U1)] out bool fServiceIsRunning);
 
