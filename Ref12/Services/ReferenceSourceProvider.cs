@@ -17,7 +17,7 @@ namespace SLaks.Ref12.Services {
 		void Navigate(string assemblyName, string rqName);
 	}
 	[Export(typeof(IReferenceSourceProvider))]
-	public class ReferenceSourceProvider : IReferenceSourceProvider {
+	public class ReferenceSourceProvider : IReferenceSourceProvider, IDisposable {
 		static readonly string[] urls = { "http://index", "http://referencesource.microsoft.com", "http://referencesource-beta.microsoft.com" };
 
 		readonly ILogger logger;
@@ -72,6 +72,17 @@ namespace SLaks.Ref12.Services {
 			Process.Start(url);
 		}
 
+
+
+		///<summary>Releases all resources used by the ReferenceSourceProvider.</summary>
+		public void Dispose() { Dispose(true); GC.SuppressFinalize(this); }
+		///<summary>Releases the unmanaged resources used by the ReferenceSourceProvider and optionally releases the managed resources.</summary>
+		///<param name="disposing">true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
+		protected virtual void Dispose(bool disposing) {
+			if (disposing) {
+				timer.Dispose();
+			}
+		}
 
 		public static string GetHash(string result) {
 			result = GetMD5Hash(result, 16);

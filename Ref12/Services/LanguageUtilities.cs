@@ -10,11 +10,9 @@ namespace SLaks.Ref12.Services {
 	static class LanguageUtilities {
 		public static bool IsRunning() {
 			bool result;
-			LangService_ServiceIsRunning(out result);
+			NativeMethods.LangService_ServiceIsRunning(out result);
 			return result;
 		}
-		[DllImport("CSLangSvc.dll", PreserveSig = false)]
-		static extern void LangService_ServiceIsRunning([MarshalAs(UnmanagedType.U1)] out bool fServiceIsRunning);
 
 
 		// Stolen from Microsoft.VisualStudio.CSharp.Services.Language.Features.Peek.PeekableItemSource
@@ -32,7 +30,7 @@ namespace SLaks.Ref12.Services {
 			int[] lines, columns;
 			bool[] isMetaDataFlags;
 			try {
-				GoToDefinition_GetLocations(position.Line, position.Character, document.FilePath, out fileNames, out lines, out columns, out rqNames, out assemblyBinaryNames, out isMetaDataFlags);
+				NativeMethods.GoToDefinition_GetLocations(position.Line, position.Character, document.FilePath, out fileNames, out lines, out columns, out rqNames, out assemblyBinaryNames, out isMetaDataFlags);
 			} catch (InvalidOperationException) {
 				yield break;
 			}
@@ -40,16 +38,21 @@ namespace SLaks.Ref12.Services {
 				yield break;
 
 			if (fileNames.Length != lines.Length || lines.Length != columns.Length || columns.Length != rqNames.Length || rqNames.Length != assemblyBinaryNames.Length)
-				throw new InvalidOperationException("GoToDefinition_GetLocations");
+				throw new InvalidOperationException("GoToDefinition_GetLocations returned inconsistent arrays");
 
 			for (int i = 0; i < fileNames.Length; i++)
 				yield return new GoToDefLocation(new FileName(fileNames[i]), new Position(lines[i], columns[i]), rqNames[i], assemblyBinaryNames[i], isMetaDataFlags[i]);
 		}
 
-		[DllImport("CSLangSvc.dll", PreserveSig = false)]
-		static extern void GoToDefinition_GetLocations(int iLine, int iCol, [MarshalAs(UnmanagedType.BStr)] string bstrFileName, [MarshalAs(UnmanagedType.SafeArray)] out string[] fileNames, [MarshalAs(UnmanagedType.SafeArray)] out int[] lines, [MarshalAs(UnmanagedType.SafeArray)] out int[] columns, [MarshalAs(UnmanagedType.SafeArray)] out string[] rqNames, [MarshalAs(UnmanagedType.SafeArray)] out string[] assemblyBinaryNames, [MarshalAs(UnmanagedType.SafeArray)] out bool[] isMetaDataFlags);
-
 	}
+	static class NativeMethods {
+		[DllImport("CSLangSvc.dll", PreserveSig = false)]
+		internal static extern void LangService_ServiceIsRunning([MarshalAs(UnmanagedType.U1)] out bool fServiceIsRunning);
+
+		[DllImport("CSLangSvc.dll", PreserveSig = false)]
+		internal static extern void GoToDefinition_GetLocations(int iLine, int iCol, [MarshalAs(UnmanagedType.BStr)] string bstrFileName, [MarshalAs(UnmanagedType.SafeArray)] out string[] fileNames, [MarshalAs(UnmanagedType.SafeArray)] out int[] lines, [MarshalAs(UnmanagedType.SafeArray)] out int[] columns, [MarshalAs(UnmanagedType.SafeArray)] out string[] rqNames, [MarshalAs(UnmanagedType.SafeArray)] out string[] assemblyBinaryNames, [MarshalAs(UnmanagedType.SafeArray)] out bool[] isMetaDataFlags);
+	}
+
 	class GoToDefLocation {
 		public FileName FileName { get; private set; }
 		public Position Position { get; private set; }
