@@ -24,7 +24,7 @@ namespace SLaks.Ref12.Services {
 		}
 
 		public void Log(string message) {
-			ErrorHandler.ThrowOnFailure(pane.OutputStringThreadSafe(DateTime.Now + ": GoToDex: " + message + "\n"));
+			ErrorHandler.ThrowOnFailure(pane.OutputStringThreadSafe(DateTime.Now + ": Ref12: " + message + "\n"));
 		}
 
 		public void Log(string message, Exception ex) {

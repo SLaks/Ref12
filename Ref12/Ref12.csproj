@@ -91,10 +91,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Resources\GoToDex-200.png">
+    <Content Include="Resources\Ref12-200.png">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Resources\GoToDex-32.png">
+    <Content Include="Resources\Ref12-32.png">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
   </ItemGroup>

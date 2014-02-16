@@ -3,10 +3,10 @@
 	<Identifier Id="bfc869c4-ae0f-467a-86a4-5d9401303490">
 		<Name>Ref12</Name>
 		<Author>SLaks</Author>
-		<Version>1.0.2</Version>
+		<Version>1.0.0</Version>
 		<Description xml:space="preserve">Forwards F12 to ReferenceSource.Microsoft.com instead of showing metadata.</Description>
-		<Icon>Resources\GoToDex-32.png</Icon>
-		<PreviewImage>Resources\GoToDex-200.png</PreviewImage>
+		<Icon>Resources\Ref12-32.png</Icon>
+		<PreviewImage>Resources\Ref12-200.png</PreviewImage>
 		<MoreInfoUrl>https://github.com/SLaks/Ref12</MoreInfoUrl>
 		<Locale>1033</Locale>
 		<SupportedFrameworkRuntimeEdition MinVersion="4.5" MaxVersion="6.0"/>
