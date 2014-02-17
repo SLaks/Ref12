@@ -23,7 +23,7 @@ namespace SLaks.Ref12.Commands {
 		}
 
 		protected override bool Execute(VSConstants.VSStd97CmdID commandId, uint nCmdexecopt, IntPtr pvaIn, IntPtr pvaOut) {
-			SnapshotPoint? caretPoint = TextView.GetCaretPoint(s => s.ContentType.IsOfType("CSharp") || s.ContentType.IsOfType("Basic"));
+			SnapshotPoint? caretPoint = TextView.GetCaretPoint(s => s.ContentType.IsOfType("CSharp"));
 			if (caretPoint == null)
 				return false;
 
