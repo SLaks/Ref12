@@ -18,15 +18,22 @@ namespace SLaks.Ref12.Services {
 			int charIndex = Math.Max(snapshotPoint.Position - containingLine.Start.Position, 0);
 			return new Position(containingLine.LineNumber, charIndex);
 		}
+		private static Tuple<int, int> ToCSharpTuple(SnapshotPoint corePoint, ITextSnapshot snapshot = null) {
+			var p = ToCSharpPosition(corePoint, snapshot);
+			return Tuple.Create(p.Line, p.Character);
+		}
 
 		public static IEnumerable<GoToDefLocation> GetGoToDefLocations(SnapshotPoint triggerPoint, string sourceFileName) {
-			Position position = ToCSharpPosition(triggerPoint, null);
+			// I cannot use Position, because it will be compiled into a
+			// a field in the iterator type, which will throw a TypeLoad
+			// exception before I add my AssemblyResolve handler.
+			var position = ToCSharpTuple(triggerPoint, null);
 
 			string[] fileNames, rqNames, assemblyBinaryNames;
 			int[] lines, columns;
 			bool[] isMetaDataFlags;
 			try {
-				NativeMethods.GoToDefinition_GetLocations(position.Line, position.Character, sourceFileName, out fileNames, out lines, out columns, out rqNames, out assemblyBinaryNames, out isMetaDataFlags);
+				NativeMethods.GoToDefinition_GetLocations(position.Item1, position.Item2, sourceFileName, out fileNames, out lines, out columns, out rqNames, out assemblyBinaryNames, out isMetaDataFlags);
 			} catch (InvalidOperationException) {
 				yield break;
 			}
