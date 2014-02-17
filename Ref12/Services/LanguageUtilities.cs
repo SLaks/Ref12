@@ -11,6 +11,17 @@ namespace SLaks.Ref12.Services {
 			AssemblyRedirector.TargetNames.Add("Microsoft.VisualStudio.CSharp.Services.Language.Interop");
 		}
 
+		public static bool IsRunning() {
+			bool result;
+			try {
+				NativeMethods.LangService_ServiceIsRunning(out result);
+			} catch (EntryPointNotFoundException) {
+				return true;	// If this API is not available (< VS2013), assume they are running
+			}
+			return result;
+		}
+
+
 		// Stolen from Microsoft.VisualStudio.CSharp.Services.Language.Features.Peek.PeekableItemSource
 		public static Position ToCSharpPosition(SnapshotPoint corePoint, ITextSnapshot snapshot = null) {
 			SnapshotPoint snapshotPoint = corePoint.TranslateTo(snapshot ?? corePoint.Snapshot, PointTrackingMode.Positive);
@@ -46,8 +57,12 @@ namespace SLaks.Ref12.Services {
 			for (int i = 0; i < fileNames.Length; i++)
 				yield return new GoToDefLocation(fileNames[i], rqNames[i], assemblyBinaryNames[i], isMetaDataFlags[i]);
 		}
+
 	}
 	static partial class NativeMethods {
+		[DllImport("CSLangSvc.dll", PreserveSig = false)]
+		internal static extern void LangService_ServiceIsRunning([MarshalAs(UnmanagedType.U1)] out bool fServiceIsRunning);
+
 		[DllImport("CSLangSvc.dll", PreserveSig = false)]
 		internal static extern void GoToDefinition_GetLocations(int iLine, int iCol, [MarshalAs(UnmanagedType.BStr)] string bstrFileName, [MarshalAs(UnmanagedType.SafeArray)] out string[] fileNames, [MarshalAs(UnmanagedType.SafeArray)] out int[] lines, [MarshalAs(UnmanagedType.SafeArray)] out int[] columns, [MarshalAs(UnmanagedType.SafeArray)] out string[] rqNames, [MarshalAs(UnmanagedType.SafeArray)] out string[] assemblyBinaryNames, [MarshalAs(UnmanagedType.SafeArray)] out bool[] isMetaDataFlags);
 	}
