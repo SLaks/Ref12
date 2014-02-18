@@ -44,6 +44,7 @@ namespace SLaks.Ref12.Services {
 		public ISet<string> AvailableAssemblies { get; private set; }
 
 		public async Task LookupService() {
+			Exception lastFailure = new Exception("No reference source URLs defined");
 			foreach (var url in urls) {
 				string assemblyList;
 				try {
@@ -59,10 +60,11 @@ namespace SLaks.Ref12.Services {
 					logger.Log("Using reference source from " + url + " with " + AvailableAssemblies.Count + " assemblies");
 					return;
 				} catch (Exception ex) {
-					logger.Log("An error occurred while trying reference URL " + url + "; skipping", ex);
+					lastFailure = ex;
 					continue;
 				}
 			}
+			logger.Log("Errors occurred while trying all reference URLs; Ref12 will not work", lastFailure);
 			AvailableAssemblies = new HashSet<string>();
 		}
 
