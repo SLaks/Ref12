@@ -37,7 +37,7 @@ namespace SLaks.Ref12.Commands {
 
 			Debug.WriteLine("Ref12: Navigating to RQName " + symbol.Item2);
 
-			target.Navigate(symbol.Item1, symbol.Item2);
+			target.Navigate(symbol.Item1, RQNameTranslator.ToIndexId(symbol.Item2));
 			return true;
 		}
 

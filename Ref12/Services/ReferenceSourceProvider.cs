@@ -14,7 +14,7 @@ using Task = System.Threading.Tasks.Task;
 namespace SLaks.Ref12.Services {
 	public interface IReferenceSourceProvider {
 		ISet<string> AvailableAssemblies { get; }
-		void Navigate(string assemblyName, string rqName);
+		void Navigate(string assemblyName, string indexId);
 	}
 	[Export(typeof(IReferenceSourceProvider))]
 	public class ReferenceSourceProvider : IReferenceSourceProvider, IDisposable {
@@ -68,8 +68,8 @@ namespace SLaks.Ref12.Services {
 			AvailableAssemblies = new HashSet<string>();
 		}
 
-		public void Navigate(string assemblyName, string rqName) {
-			var url = baseUrl + "/" + assemblyName + "/a.html#" + GetHash(RQNameTranslator.ToIndexId(rqName));
+		public void Navigate(string assemblyName, string indexId) {
+			var url = baseUrl + "/" + assemblyName + "/a.html#" + GetHash(indexId);
 
 			Process.Start(url);
 		}
