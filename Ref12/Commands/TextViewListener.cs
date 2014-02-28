@@ -18,7 +18,7 @@ namespace SLaks.Ref12.Commands {
 		[Import]
 		public SVsServiceProvider ServiceProvider { get; set; }
 
-		[ImportMany]
+		[ImportMany(AllowRecomposition = true)] // For unit tests
 		public IEnumerable<IReferenceSourceProvider> ReferenceProviders { get; set; }
 
 		[Import]

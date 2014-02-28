@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<TestSettings name="VSHost" id="b9528352-c09c-469c-a5a6-656aeeb0f368" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Description>These are test settings for Visual Studio automation tests.</Description>
+  <Deployment enabled="false" />
+  <Execution>
+	  <Hosts type="VS IDE" skipUnhostableTests="false">
+		  <VSSDKTestHostRunConfig name="VS IDE" HiveKind="DevEnv" HiveName="12.0Exp" xmlns="http://microsoft.com/schemas/VisualStudio/SDK/Tools/IdeHostAdapter/2006/06" />
+	  </Hosts>
+	  <TestTypeSpecific>
+      <UnitTestRunConfig testTypeId="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b">
+        <AssemblyResolution>
+          <TestDirectory useLoadContext="true" />
+        </AssemblyResolution>
+      </UnitTestRunConfig>
+    </TestTypeSpecific>
+    <AgentRule name="LocalMachineDefaultRole">
+    </AgentRule>
+  </Execution>
+  <Properties />
+</TestSettings>
