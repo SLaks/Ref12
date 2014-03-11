@@ -8,6 +8,10 @@ using Microsoft.VisualStudio.CSharp.Services.Language.Refactoring;
 
 namespace SLaks.Ref12.Services {
 	public static class RQNameTranslator {
+		static RQNameTranslator() {
+			AssemblyRedirector.TargetNames.Add("Microsoft.VisualStudio.CSharp.Services.Language");
+		}
+
 		public static string ToIndexId(string rqName) {
 			var parsed = new RQNameParser().Parse(rqName);
 
@@ -31,7 +35,7 @@ namespace SLaks.Ref12.Services {
 			if (member is RQMemberVariable) // RQKeyword for fields is Membvar
 				sb.Append("F:");
 			else
-				sb.Append(RQKeyword(member)[0]).Append(':');
+				sb.Append(Methods.RQKeyword(member)[0]).Append(':');
 
 			sb.Append(member.ContainingType.ClrName());
 			sb.Append('.');
@@ -70,7 +74,10 @@ namespace SLaks.Ref12.Services {
 			return t.TypeName + "`" + t.TypeVariableCount;
 		}
 
-		static Func<RQNode, string> RQKeyword = (Func<RQNode, string>)Delegate.CreateDelegate(typeof(Func<RQNode, string>), typeof(RQNode).GetProperty("RQKeyword", BindingFlags.Instance | BindingFlags.NonPublic).GetMethod);
+		// Run the outer type initializer before trying to load RQNode.
+		static class Methods {
+			public static Func<RQNode, string> RQKeyword = (Func<RQNode, string>)Delegate.CreateDelegate(typeof(Func<RQNode, string>), typeof(RQNode).GetProperty("RQKeyword", BindingFlags.Instance | BindingFlags.NonPublic).GetMethod);
+		}
 
 
 		class ParameterNameConverter {
