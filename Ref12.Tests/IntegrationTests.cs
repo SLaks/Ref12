@@ -28,16 +28,14 @@ namespace Ref12.Tests {
 			public RecordingSourceProvider() { AvailableAssemblies = new HashSet<string> { "mscorlib" }; }
 			public ISet<string> AvailableAssemblies { get; private set; }
 
-			public string LastAssemblyName { get; private set; }
-			public string LastIndexId { get; private set; }
+			public SymbolInfo LastSymbol { get; private set; }
 
-			void IReferenceSourceProvider.Navigate(string assemblyName, string indexId) {
-				LastAssemblyName = assemblyName;
-				LastIndexId = indexId;
+			void IReferenceSourceProvider.Navigate(SymbolInfo symbol) {
+				LastSymbol = symbol;
 			}
 
 			public void Reset() {
-				LastAssemblyName = LastIndexId = null;
+				LastSymbol = null;
 			}
 		}
 
@@ -70,13 +68,13 @@ namespace Ref12.Tests {
 
 			textView.Caret.MoveTo(textView.FindSpan("Environment.GetFolderPath").End);
 			GetCurrentNativeTextView().Execute(VSConstants.VSStd97CmdID.GotoDefn);
-			Assert.AreEqual("mscorlib", sourceRecord.LastAssemblyName);
-			Assert.AreEqual("M:System.Environment.GetFolderPath(System.Environment.SpecialFolder)", sourceRecord.LastIndexId);
+			Assert.AreEqual("mscorlib", sourceRecord.LastSymbol.AssemblyName);
+			Assert.AreEqual("M:System.Environment.GetFolderPath(System.Environment.SpecialFolder)", sourceRecord.LastSymbol.IndexId);
 
 			textView.Caret.MoveTo(textView.FindSpan("Environment.SpecialFolder.CommonOemLinks").End);
 			GetCurrentNativeTextView().Execute(VSConstants.VSStd97CmdID.GotoDefn);
-			Assert.AreEqual("mscorlib", sourceRecord.LastAssemblyName);
-			Assert.AreEqual("F:System.Environment.SpecialFolder.CommonOemLinks", sourceRecord.LastIndexId);
+			Assert.AreEqual("mscorlib", sourceRecord.LastSymbol.AssemblyName);
+			Assert.AreEqual("F:System.Environment.SpecialFolder.CommonOemLinks", sourceRecord.LastSymbol.IndexId);
 		}
 
 		///<summary>Gets the TextView for the active document.</summary>

@@ -27,7 +27,7 @@ namespace SLaks.Ref12.Commands {
 		public ITextDocumentFactoryService TextDocumentFactoryService { get; set; }
 
 		public async void SubjectBuffersConnected(IWpfTextView textView, ConnectionReason reason, Collection<ITextBuffer> subjectBuffers) {
-			if (RoslynUtilities.IsRoslynInstalled(ServiceProvider) || !LanguageUtilities.IsRunning())
+			if (RoslynUtilities.IsRoslynInstalled(ServiceProvider) || !CSharpLanguageUtilities.IsRunning())
 				return;
 
 			if (!subjectBuffers.Any(b => b.ContentType.IsOfType("CSharp")))
