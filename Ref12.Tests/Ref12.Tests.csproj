@@ -78,6 +78,10 @@
     <Compile Include="Tests\IntegrationTests.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Ref12.Unversioned\Ref12.Unversioned.csproj">
+      <Project>{6677656D-FC7E-4C05-BA25-510019A9E73D}</Project>
+      <Name>Ref12.Unversioned</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Ref12\Ref12.csproj">
       <Project>{0E2EB598-A14C-4A30-806F-CEB328654F37}</Project>
       <Name>Ref12</Name>

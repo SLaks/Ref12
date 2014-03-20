@@ -6,7 +6,7 @@ using Microsoft.VisualStudio.Text;
 
 namespace SLaks.Ref12 {
 	///<summary>Redirects loads of unversioned VS assemblies to the version in the current VS instance.</summary>
-	static class AssemblyRedirector {
+	public static class AssemblyRedirector {
 		///<summary>Gets the list of unqualified assembly names to redirect loads for.</summary>
 		public static readonly ISet<string> TargetNames = new HashSet<string>();
 
@@ -22,7 +22,7 @@ namespace SLaks.Ref12 {
 			if (!TargetNames.Contains(name.Name))
 				return null;
 			name.Version = vsVersion;
-			if (name.ToString() == args.Name)   // Prevent recursion
+			if (name.ToString() == args.Name)	// Prevent recursion
 				return null;
 
 			Debug.WriteLine("Ref12: Redirecting load of " + args.Name + ",\tfrom " + (args.RequestingAssembly == null ? "(unknown)" : args.RequestingAssembly.FullName));
