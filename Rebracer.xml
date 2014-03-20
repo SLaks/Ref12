@@ -7,7 +7,12 @@
   <ToolsOptions>
     <ToolsOptionsCategory name="Environment">
       <ToolsOptionsSubCategory name="TaskList">
-        <PropertyValue name="CommentTokens" ArrayType="VT_VARIANT" ArrayElementCount="4"><PropertyValue name="0">TODO:2</PropertyValue><PropertyValue name="1">HACK:2</PropertyValue><PropertyValue name="2">UNDONE:2</PropertyValue><PropertyValue name="3">UnresolvedMergeConflict:3</PropertyValue></PropertyValue>
+        <PropertyValue name="CommentTokens" ArrayType="VT_VARIANT" ArrayElementCount="4">
+          <PropertyValue name="0">TODO:2</PropertyValue>
+          <PropertyValue name="1">HACK:2</PropertyValue>
+          <PropertyValue name="2">UNDONE:2</PropertyValue>
+          <PropertyValue name="3">UnresolvedMergeConflict:3</PropertyValue>
+        </PropertyValue>
         <PropertyValue name="ConfirmTaskDeletion">true</PropertyValue>
         <PropertyValue name="DontShowFilePaths">true</PropertyValue>
         <PropertyValue name="WarnOnAddingHiddenItem">false</PropertyValue>
@@ -71,7 +76,7 @@
         <PropertyValue name="NewLines_Braces_ObjectInitializer">1</PropertyValue>
         <PropertyValue name="NewLines_Braces_Type">0</PropertyValue>
         <PropertyValue name="NewLines_Keywords_Catch">0</PropertyValue>
-        <PropertyValue name="NewLines_Keywords_Else">1</PropertyValue>
+        <PropertyValue name="NewLines_Keywords_Else">0</PropertyValue>
         <PropertyValue name="NewLines_Keywords_Finally">0</PropertyValue>
         <PropertyValue name="NewLines_ObjectInitializer_EachMember">1</PropertyValue>
         <PropertyValue name="NewLines_QueryExpression_EachClause">1</PropertyValue>
