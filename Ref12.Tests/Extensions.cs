@@ -13,6 +13,8 @@ namespace Ref12.Tests {
 			var startIndex = textView.TextBuffer.CurrentSnapshot.GetText().IndexOf(search);
 			if (startIndex < 0)
 				throw new ArgumentException("Cannot find string " + search);
+			if (startIndex != textView.TextBuffer.CurrentSnapshot.GetText().LastIndexOf(search))
+				throw new ArgumentException("String " + search + " occurs multiple times.  Please use a unique string");
 			return new SnapshotSpan(textView.TextBuffer.CurrentSnapshot, startIndex, search.Length);
 		}
 

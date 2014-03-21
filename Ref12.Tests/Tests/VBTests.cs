@@ -43,15 +43,15 @@ namespace Ref12.Tests {
 			Assert.AreEqual("mscorlib", symbol.AssemblyName);
 			Assert.AreEqual("T:System.Lazy`1", symbol.IndexId);
 
-			symbol = new VBResolver().GetSymbolAt(fileName, textView.FindSpan("Environment.SetEnvironmentVariable").End);
+			symbol = new VBResolver().GetSymbolAt(fileName, textView.FindSpan("Environment.SetEnvironmentVariable(\"").End - 4);
 			Assert.AreEqual("mscorlib", symbol.AssemblyName);
 			Assert.AreEqual("M:System.Environment.SetEnvironmentVariable(System.String,System.String,System.EnvironmentVariableTarget)", symbol.IndexId);
 
-			symbol = new VBResolver().GetSymbolAt(fileName, textView.FindSpan("Environment.EnvironmentVariableTarget.Process").End);
+			symbol = new VBResolver().GetSymbolAt(fileName, textView.FindSpan("EnvironmentVariableTarget.Process)").End - 1);
 			Assert.AreEqual("mscorlib", symbol.AssemblyName);
-			Assert.AreEqual("F:System.Environment.EnvironmentVariableTarget.Process", symbol.IndexId);
+			Assert.AreEqual("F:System.EnvironmentVariableTarget.Process", symbol.IndexId);
 
-			symbol = new VBResolver().GetSymbolAt(fileName, textView.FindSpan("SystemEvents.PowerModeChanged").End);
+			symbol = new VBResolver().GetSymbolAt(fileName, textView.FindSpan("AddHandler SystemEvents.PowerModeChanged").End);
 			Assert.AreEqual("System", symbol.AssemblyName);
 			Assert.AreEqual("E:Microsoft.Win32.SystemEvents.PowerModeChanged", symbol.IndexId);
 			symbol = new VBResolver().GetSymbolAt(fileName, textView.FindSpan("AddHandler").End);
