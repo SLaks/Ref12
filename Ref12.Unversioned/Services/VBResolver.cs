@@ -18,180 +18,159 @@ namespace SLaks.Ref12.Services {
 			//Debugger.Launch();
 			var file = (SourceFile)point.Snapshot.TextBuffer.MaybeGetSourceFileData().Value.SourceFile;
 
-			var p = new SymbolLocator(file, point.ToPosition());
-			p.Walk(file.RootNode);
-
-			return p.Result;
+			if (!file.IsBound)
+				return null;
+			return Walk(file.RootNode, point.ToPosition());
 		}
 
-		// Microsoft.VisualBasic.Help.SyntaxHelpProvider
-		sealed class SymbolLocator {
-			internal SymbolLocator(SourceFile file, Position cursor) {
-				Contract.ThrowIfNull(file, "file");
-				_file = file;
-				_cursor = cursor;
+		private static SymbolInfo Walk(SyntaxNode node, Position location) {
+
+			foreach (var c in node.Children) {
+				if (c.Span.End < location)
+					continue;
+				if (c.Span.Start > location)
+					return null;
+
+				if (c.Children.Any())
+					return Walk(c, location);
+				else
+					return GetSymbolInfo(c);
 			}
+			return null;
+		}
 
-			private readonly SourceFile _file;
-			private readonly Position _cursor;
-
-			public SymbolInfo Result { get; private set; }
-
-			internal void Walk(SyntaxNode node) {
-				if (!_file.IsBound)
-					return;
-				foreach (var c in node.Children) {
-					if (c.Span.End < _cursor)
-						continue;
-					if (c.Span.Start > _cursor)
-						break;
-
-					if (c.Children.Any())
-						Walk(c); 
-					else
-						AddSymbolName(c);
-				}
+		private static string ToIndexId(Symbol symbol, ISourceFile file) {
+			VBParameter vBParameter = symbol as VBParameter;
+			if (vBParameter != null) {
+				symbol = vBParameter.ParameterType;
 			}
-
-			private void SetResult(Symbol symbol, string indexId) {
-				if (Result == null) {
-					Result = new SymbolInfo(indexId, symbol.Assembly.BinaryFileName);
+			VBMember vBMember = symbol as VBMember;
+			if (vBMember != null) {
+				if (vBMember.IsFunctionResultLocal) {
+					return null;
 				}
-			}
-			private string GetSymbolKeyword(Symbol symbol) {
-				VBParameter vBParameter = symbol as VBParameter;
-				if (vBParameter != null) {
-					symbol = vBParameter.ParameterType;
+				while (vBMember.ContainingMember != null) {
+					vBMember = vBMember.ContainingMember;
 				}
-				VBMember vBMember = symbol as VBMember;
-				if (vBMember != null) {
-					if (vBMember.IsFunctionResultLocal) {
-						symbol = _file.GetContainingSymbol(_cursor);
-						return GetSymbolKeyword(symbol);
+				if (vBMember.IsProperty && vBMember.Name == "Value" && vBMember.ContainingType != null && vBMember.ContainingType.Name == "InternalXmlHelper") {
+					return null; // "vb.XmlPropertyExtensionValue";
+				}
+				if (vBMember.IsProperty && vBMember.SourceFile != null && vBMember.SourceFile.IsSolutionExtension) {
+					if (vBMember.Name == "Computer") {
+						return "T:Microsoft.VisualBasic.Devices." + vBMember.Name;
 					}
-					while (vBMember.ContainingMember != null) {
-						vBMember = vBMember.ContainingMember;
+					if (vBMember.Name == "User") {
+						return "T:Microsoft.VisualBasic.ApplicationServices." + vBMember.Name;
 					}
-					if (vBMember.IsProperty && vBMember.Name == "Value" && vBMember.ContainingType != null && vBMember.ContainingType.Name == "InternalXmlHelper") {
-						return null; // "vb.XmlPropertyExtensionValue";
-					}
-					if (vBMember.IsProperty && vBMember.SourceFile != null && vBMember.SourceFile.IsSolutionExtension) {
-						if (vBMember.Name == "Computer") {
-							return "T:Microsoft.VisualBasic.Devices." + vBMember.Name;
-						}
-						if (vBMember.Name == "User") {
-							return "T:Microsoft.VisualBasic.ApplicationServices." + vBMember.Name;
-						}
-						if (vBMember.Name == "Application") {
-							return null; //"My." + vBMember.Name;
-						}
-						if (vBMember.ReturnType != null && vBMember.ReturnType.BaseClass != null) {
-							return "T:Microsoft.VisualBasic.ApplicationServices." + vBMember.ReturnType.BaseClass.Name;
-						}
+					if (vBMember.Name == "Application") {
 						return null; //"My." + vBMember.Name;
-					} else {
-						if (vBMember.IsSynthetic || (vBMember.IsField && vBMember.SourceFile != null)) {
-							symbol = vBMember.ReturnType;
-						} else {
-							VBType containingType = vBMember.ContainingType;
-							if (containingType != null && (containingType.IsAnonymousType || containingType.IsAnonymousDelegate)) {
-								return null; // "vb.AnonymousType";
-							}
-						}
 					}
-				}
-				VBType vBType = symbol as VBType;
-				while (vBType != null) {
-					if (vBType.IsArray || vBType.IsPointer) {
-						vBType = vBType.ElementType;
-					} else {
-						if (vBType.DefiningType == null) {
-							break;
-						}
-						vBType = vBType.DefiningType;
-						if (vBType == _file.Host.RuntimeInfo.NullableType) {
-							return null; //"vb.Nullable";
-						}
+					if (vBMember.ReturnType != null && vBMember.ReturnType.BaseClass != null) {
+						return "T:Microsoft.VisualBasic.ApplicationServices." + vBMember.ReturnType.BaseClass.Name;
 					}
-				}
-				if (vBType != null) {
-					if (vBType.IsPrimitive) {
-						return "T:System." + vBType.TypeCode.ToString(); // "vb." + vBType.Name;
-					}
-					if (vBType.IsAnonymousType || vBType.IsAnonymousDelegate) {
-						return null; //"vb.AnonymousType";
-					}
-					if (vBType == _file.Binder.ResolveType("System.Runtime.CompilerServices.ExtensionAttribute", 0)) {
-						return null; //"vb.ExtensionMethods";
-					}
-				}
-				VBNamespace vBNamespace = symbol as VBNamespace;
-				if (vBNamespace != null && vBNamespace.Name.EqualsNoCase("My")) {
-					return null; //"vb.My";
-				}
-				if (symbol != null) {
-					// CodeBuilder adds unavoidable spaces; IndexIds never have spaces.
-					return symbol.ToString(new IndexIdSymbolFormatter()).Replace(" ", "");
-				}
-				return null;
-			}
-
-			private void AddSymbolName(SyntaxNode node) {
-				if (node is IdentifierNode) {
-					node = node.Parent;
-				}
-				//if (node.Parent is NamedTypeNode) {
-				//	node = node.Parent;
-				//}
-
-				QualifiedNameNode qualifiedNameNode = node.Parent as QualifiedNameNode;
-				if (qualifiedNameNode != null && qualifiedNameNode.Name == node) {
-					node = qualifiedNameNode;
-				}
-				if (node.Parent is NameExpressionNode) {
-					node = node.Parent;
-				}
-				if (node.Parent is GenericQualifiedNode) {
-					node = node.Parent;
-				}
-				QualifiedNode qualifiedNode = node.Parent as QualifiedNode;
-				while (qualifiedNode != null && qualifiedNode.Value == node) {
-					node = qualifiedNode;
-					qualifiedNode = (node.Parent as QualifiedNode);
-				}
-				if (node.Parent is ICallSiteNode || node.Parent is NewNode) {
-					node = node.Parent;
-				}
-				Symbol symbol = null;
-				NameNode name = node as NameNode;
-				if (name != null) {
-					if (name.Parent is DeclaratorNode && name.Parent.Parent is ParameterNode) {
-						LambdaNode lambdaNode = name.Parent.Parent.Parent as LambdaNode;
-						if (lambdaNode != null) {
-							LambdaExpression lambdaExpression = _file.Binder.CompileExpression(lambdaNode) as LambdaExpression;
-							if (lambdaExpression != null) {
-								symbol = lambdaExpression.Parameters
-									.FirstOrDefault(p => p.Name.EqualsNoCase(((IdentifierNode)name).Name));
-							}
-						}
-					}
-					if (symbol == null) {
-						symbol = _file.Binder.ResolveName(name);
-					}
+					return null; //"My." + vBMember.Name;
 				} else {
-					BoundNode boundNode = _file.Binder.CompileExpression(node);
-					if (boundNode != null) {
-						symbol = boundNode.ExtractSymbol();
-					}
-				}
-				if (symbol != null) {
-					string symbolKeyword = GetSymbolKeyword(symbol);
-					if (symbolKeyword != null) {
-						SetResult(symbol, symbolKeyword);
-						return;
+					if (vBMember.IsSynthetic || (vBMember.IsField && vBMember.SourceFile != null)) {
+						symbol = vBMember.ReturnType;
+					} else {
+						VBType containingType = vBMember.ContainingType;
+						if (containingType != null && (containingType.IsAnonymousType || containingType.IsAnonymousDelegate)) {
+							return null; // "vb.AnonymousType";
+						}
 					}
 				}
 			}
+			VBType vBType = symbol as VBType;
+			while (vBType != null) {
+				if (vBType.IsArray || vBType.IsPointer) {
+					vBType = vBType.ElementType;
+				} else {
+					if (vBType.DefiningType == null) {
+						break;
+					}
+					vBType = vBType.DefiningType;
+					if (vBType == file.Host.RuntimeInfo.NullableType) {
+						return null; //"vb.Nullable";
+					}
+				}
+			}
+			if (vBType != null) {
+				if (vBType.IsPrimitive) {
+					return "T:System." + vBType.TypeCode.ToString(); // "vb." + vBType.Name;
+				}
+				if (vBType.IsAnonymousType || vBType.IsAnonymousDelegate) {
+					return null; //"vb.AnonymousType";
+				}
+				if (vBType == file.Binder.ResolveType("System.Runtime.CompilerServices.ExtensionAttribute", 0)) {
+					return null; //"vb.ExtensionMethods";
+				}
+			}
+			VBNamespace vBNamespace = symbol as VBNamespace;
+			if (vBNamespace != null && vBNamespace.Name.EqualsNoCase("My")) {
+				return null; //"vb.My";
+			}
+			if (symbol != null) {
+				// CodeBuilder adds unavoidable spaces; IndexIds never have spaces.
+				return symbol.ToString(new IndexIdSymbolFormatter()).Replace(" ", "");
+			}
+			return null;
+		}
+
+		private static SymbolInfo GetSymbolInfo(SyntaxNode node) {
+			if (node is IdentifierNode) {
+				node = node.Parent;
+			}
+			//if (node.Parent is NamedTypeNode) {
+			//	node = node.Parent;
+			//}
+
+			QualifiedNameNode qualifiedNameNode = node.Parent as QualifiedNameNode;
+			if (qualifiedNameNode != null && qualifiedNameNode.Name == node) {
+				node = qualifiedNameNode;
+			}
+			if (node.Parent is NameExpressionNode) {
+				node = node.Parent;
+			}
+			if (node.Parent is GenericQualifiedNode) {
+				node = node.Parent;
+			}
+			QualifiedNode qualifiedNode = node.Parent as QualifiedNode;
+			while (qualifiedNode != null && qualifiedNode.Value == node) {
+				node = qualifiedNode;
+				qualifiedNode = (node.Parent as QualifiedNode);
+			}
+			if (node.Parent is ICallSiteNode || node.Parent is NewNode) {
+				node = node.Parent;
+			}
+			Symbol symbol = null;
+			NameNode name = node as NameNode;
+			if (name != null) {
+				if (name.Parent is DeclaratorNode && name.Parent.Parent is ParameterNode) {
+					LambdaNode lambdaNode = name.Parent.Parent.Parent as LambdaNode;
+					if (lambdaNode != null) {
+						LambdaExpression lambdaExpression = node.Tree.SourceFile.Binder.CompileExpression(lambdaNode) as LambdaExpression;
+						if (lambdaExpression != null) {
+							symbol = lambdaExpression.Parameters
+								.FirstOrDefault(p => p.Name.EqualsNoCase(((IdentifierNode)name).Name));
+						}
+					}
+				}
+				if (symbol == null) {
+					symbol = node.Tree.SourceFile.Binder.ResolveName(name);
+				}
+			} else {
+				BoundNode boundNode = node.Tree.SourceFile.Binder.CompileExpression(node);
+				if (boundNode != null) {
+					symbol = boundNode.ExtractSymbol();
+				}
+			}
+			if (symbol == null)
+				return null;
+
+			string indexId = ToIndexId(symbol, node.Tree.SourceFile);
+			if (indexId == null)
+				return null;
+			return new SymbolInfo(indexId, symbol.Assembly.BinaryFileName);
 		}
 
 		sealed class IndexIdSymbolFormatter : SymbolFormatter {
@@ -207,7 +186,7 @@ namespace SLaks.Ref12.Services {
 				for (int i = 0; i < node.Rank; i++) {
 					if (i > 0)
 						Code.Append(",");
-					Code.Append("0:");  // I think VBType can only be an SZArray
+					Code.Append("0:");	// I think VBType can only be an SZArray
 				}
 				Code.Append("]");
 			}
@@ -282,9 +261,9 @@ namespace SLaks.Ref12.Services {
 				VisitBaseQualifier(node.ContainingType);
 				string text;
 				if (node.IsConstructor) {
-					text = ".ctor";     // IndexId uses ".ctor", not "#ctor"
+					text = ".ctor";		// IndexId uses ".ctor", not "#ctor"
 				} else if (node.IsProperty && node.IsDefault) {
-					text = "Item";  // TODO: Test indexer
+					text = "Item";	// TODO: Test indexer
 				} else {
 					text = node.Name;
 					int count = node.TypeParameters.Count;
@@ -293,7 +272,7 @@ namespace SLaks.Ref12.Services {
 					}
 				}
 				Code.Append(text);
-				if (node.Parameters.Any() && !node.IsEvent) // Events cannot be overloaded, so they don't need signatures
+				if (node.Parameters.Any() && !node.IsEvent)	// Events cannot be overloaded, so they don't need signatures
 					VisitParameters(node.Parameters);
 			}
 			protected override void VisitType(VBType node) {
