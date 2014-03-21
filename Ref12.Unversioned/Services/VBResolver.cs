@@ -39,13 +39,11 @@ namespace SLaks.Ref12.Services {
 
 			internal void Walk(SyntaxNode node) {
 				foreach (var c in node.Children) {
-					if (c.Span.Contains(_cursor))
+					if (c.Span.IsAdjacentTo(_cursor))
 						c.Accept(this);
+					if (Result != null)
+						break;
 				}
-			}
-			protected override void VisitStatement(StatementNode node) {
-				base.VisitStatement(node);
-				Walk(node);
 			}
 
 			private void SetResult(Symbol symbol, string indexId) {
@@ -136,10 +134,18 @@ namespace SLaks.Ref12.Services {
 					return;
 				if (!_file.IsBound)
 					return;
+				// Only visit the innermost node containing the cursor.
+				if (node.Children.Any()) {
+					Walk(node);
+					return;
+				}
 
-				if (node.Parent is ICallSiteNode) {
+				if (node is IdentifierNode) {
 					node = node.Parent;
 				}
+				//if (node.Parent is NamedTypeNode) {
+				//	node = node.Parent;
+				//}
 
 				QualifiedNameNode qualifiedNameNode = node.Parent as QualifiedNameNode;
 				if (qualifiedNameNode != null && qualifiedNameNode.Name == node) {
@@ -156,7 +162,7 @@ namespace SLaks.Ref12.Services {
 					node = qualifiedNode;
 					qualifiedNode = (node.Parent as QualifiedNode);
 				}
-				if (node.Parent is CallOrIndexNode || node.Parent is NewNode) {
+				if (node.Parent is ICallSiteNode || node.Parent is NewNode) {
 					node = node.Parent;
 				}
 				Symbol symbol = null;
@@ -190,21 +196,26 @@ namespace SLaks.Ref12.Services {
 				}
 			}
 
-
-			protected override void VisitName(NameNode node) {
-				base.VisitName(node);
-				AddSymbolName(node);
+			protected override void VisitStatement(StatementNode node) {
+				Walk(node);
+			}
+			protected override void VisitType(TypeNode node) {
+				Walk(node);
+			}
+			protected override void VisitNameExpression(NameExpressionNode node) {
+				Walk(node);
+			}
+			protected override void VisitArgument(ArgumentNode node) {
+				Walk(node);
 			}
 			protected override void VisitQualified(QualifiedNode node) {
-				base.VisitQualified(node);
-				AddSymbolName(node);
+				Walk(node);
 			}
-			protected override void VisitQualifiedName(QualifiedNameNode node) {
-				base.VisitQualifiedName(node);
-				AddSymbolName(node);
+			protected override void VisitVariableGroup(VariableGroupNode node) {
+				Walk(node);
 			}
-			protected override void VisitQualifiedGenericName(QualifiedGenericNameNode node) {
-				base.VisitQualifiedGenericName(node);
+			// This is the innermost node kind
+			protected override void VisitName(NameNode node) {
 				AddSymbolName(node);
 			}
 		}
@@ -262,6 +273,10 @@ namespace SLaks.Ref12.Services {
 			protected override void VisitStructure(VBType node) {
 				base.VisitStructure(node);
 			}
+			protected override void VisitEnumMember(VBMember node) {
+				Prefix("F:");
+				base.VisitEnumMember(node);
+			}
 			protected override void VisitField(VBMember node) {
 				Prefix("F:");
 				base.VisitField(node);
@@ -304,7 +319,7 @@ namespace SLaks.Ref12.Services {
 					}
 				}
 				Code.Append(text);
-				if (node.Parameters.Any())
+				if (node.Parameters.Any() && !node.IsEvent)	// Events cannot be overloaded, so they don't need signatures
 					VisitParameters(node.Parameters);
 			}
 			protected override void VisitType(VBType node) {
