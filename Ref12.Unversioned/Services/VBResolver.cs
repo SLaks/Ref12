@@ -25,7 +25,7 @@ namespace SLaks.Ref12.Services {
 		}
 
 		// Microsoft.VisualBasic.Help.SyntaxHelpProvider
-		sealed class SymbolLocator : SyntaxNodeVisitor {
+		sealed class SymbolLocator {
 			internal SymbolLocator(SourceFile file, Position cursor) {
 				Contract.ThrowIfNull(file, "file");
 				_file = file;
@@ -38,11 +38,18 @@ namespace SLaks.Ref12.Services {
 			public SymbolInfo Result { get; private set; }
 
 			internal void Walk(SyntaxNode node) {
+				if (!_file.IsBound)
+					return;
 				foreach (var c in node.Children) {
-					if (c.Span.IsAdjacentTo(_cursor))
-						c.Accept(this);
-					if (Result != null)
+					if (c.Span.End < _cursor)
+						continue;
+					if (c.Span.Start > _cursor)
 						break;
+
+					if (c.Children.Any())
+						Walk(c); 
+					else
+						AddSymbolName(c);
 				}
 			}
 
@@ -130,16 +137,6 @@ namespace SLaks.Ref12.Services {
 			}
 
 			private void AddSymbolName(SyntaxNode node) {
-				if (node == null || !node.Span.IsAdjacentTo(_cursor))
-					return;
-				if (!_file.IsBound)
-					return;
-				// Only visit the innermost node containing the cursor.
-				if (node.Children.Any()) {
-					Walk(node);
-					return;
-				}
-
 				if (node is IdentifierNode) {
 					node = node.Parent;
 				}
@@ -195,29 +192,6 @@ namespace SLaks.Ref12.Services {
 					}
 				}
 			}
-
-			protected override void VisitStatement(StatementNode node) {
-				Walk(node);
-			}
-			protected override void VisitType(TypeNode node) {
-				Walk(node);
-			}
-			protected override void VisitNameExpression(NameExpressionNode node) {
-				Walk(node);
-			}
-			protected override void VisitArgument(ArgumentNode node) {
-				Walk(node);
-			}
-			protected override void VisitQualified(QualifiedNode node) {
-				Walk(node);
-			}
-			protected override void VisitVariableGroup(VariableGroupNode node) {
-				Walk(node);
-			}
-			// This is the innermost node kind
-			protected override void VisitName(NameNode node) {
-				AddSymbolName(node);
-			}
 		}
 
 		sealed class IndexIdSymbolFormatter : SymbolFormatter {
@@ -233,7 +207,7 @@ namespace SLaks.Ref12.Services {
 				for (int i = 0; i < node.Rank; i++) {
 					if (i > 0)
 						Code.Append(",");
-					Code.Append("0:");	// I think VBType can only be an SZArray
+					Code.Append("0:");  // I think VBType can only be an SZArray
 				}
 				Code.Append("]");
 			}
@@ -308,9 +282,9 @@ namespace SLaks.Ref12.Services {
 				VisitBaseQualifier(node.ContainingType);
 				string text;
 				if (node.IsConstructor) {
-					text = ".ctor";		// IndexId uses ".ctor", not "#ctor"
+					text = ".ctor";     // IndexId uses ".ctor", not "#ctor"
 				} else if (node.IsProperty && node.IsDefault) {
-					text = "Item";	// TODO: Test indexer
+					text = "Item";  // TODO: Test indexer
 				} else {
 					text = node.Name;
 					int count = node.TypeParameters.Count;
@@ -319,7 +293,7 @@ namespace SLaks.Ref12.Services {
 					}
 				}
 				Code.Append(text);
-				if (node.Parameters.Any() && !node.IsEvent)	// Events cannot be overloaded, so they don't need signatures
+				if (node.Parameters.Any() && !node.IsEvent) // Events cannot be overloaded, so they don't need signatures
 					VisitParameters(node.Parameters);
 			}
 			protected override void VisitType(VBType node) {
