@@ -21,6 +21,8 @@ namespace SLaks.Ref12.Commands {
 
 			var dte = (DTE)sp.GetService(typeof(DTE));
 
+			resolvers.Add("Basic", new VBResolver());
+
 			// Dev12 (VS2013) has the new simpler native API
 			// Dev14 will hopefully have Roslyn
 			// All other versions need ParseTreeNodes

@@ -12,6 +12,7 @@ using SLaks.Ref12.Services;
 
 namespace SLaks.Ref12.Commands {
 	[Export(typeof(IWpfTextViewConnectionListener))]
+	[ContentType("Basic")]
 	[ContentType("CSharp")]
 	[TextViewRole(PredefinedTextViewRoles.Document)]
 	public class TextViewListener : IWpfTextViewConnectionListener {
@@ -27,10 +28,10 @@ namespace SLaks.Ref12.Commands {
 		public ITextDocumentFactoryService TextDocumentFactoryService { get; set; }
 
 		public async void SubjectBuffersConnected(IWpfTextView textView, ConnectionReason reason, Collection<ITextBuffer> subjectBuffers) {
-			if (RoslynUtilities.IsRoslynInstalled(ServiceProvider) || !CSharpLanguageUtilities.IsRunning())
+			if (RoslynUtilities.IsRoslynInstalled(ServiceProvider))
 				return;
 
-			if (!subjectBuffers.Any(b => b.ContentType.IsOfType("CSharp")))
+			if (!subjectBuffers.Any(b => b.ContentType.IsOfType("CSharp") || b.ContentType.IsOfType("Basic")))
 				return;
 
 			// VS2010 only creates TextViewAdapters later; wait for it to exist.

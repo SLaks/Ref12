@@ -73,6 +73,7 @@
     <Compile Include="DispatcherPriorityAwaitable.cs" />
     <Compile Include="DispatcherPriorityAwaiter.cs" />
     <Compile Include="Extensions.cs" />
+    <Compile Include="Tests\VBTests.cs" />
     <Compile Include="Tests\RQNameTranslatorTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tests\IntegrationTests.cs" />
