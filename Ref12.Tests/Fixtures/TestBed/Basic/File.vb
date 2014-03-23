@@ -2,7 +2,6 @@
 Imports System.Collections.ObjectModel
 Imports System.Linq
 Imports System.Xml.Linq
-Imports Microsoft.Win32
 
 Public Class File
 	'T:System.Lazy`1
@@ -15,7 +14,7 @@ Public Class File
 		Environment.SetEnvironmentVariable("a", "b", EnvironmentVariableTarget.Process)
 
 		'E:Microsoft.Win32.SystemEvents.PowerModeChanged
-		AddHandler SystemEvents.PowerModeChanged, Sub(s, e) e.Mode.ToString()
+		AddHandler Microsoft.Win32.SystemEvents.PowerModeChanged, Sub(s, e) e.Mode.ToString()
 
 		Dim str = ""
 

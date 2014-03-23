@@ -51,9 +51,12 @@ namespace Ref12.Tests {
 			Assert.AreEqual("mscorlib", symbol.AssemblyName);
 			Assert.AreEqual("F:System.EnvironmentVariableTarget.Process", symbol.IndexId);
 
-			symbol = new VBResolver().GetSymbolAt(fileName, textView.FindSpan("AddHandler SystemEvents.PowerModeChanged").End);
+			symbol = new VBResolver().GetSymbolAt(fileName, textView.FindSpan("AddHandler Microsoft.Win32.SystemEvents.PowerModeChanged").End);
 			Assert.AreEqual("System", symbol.AssemblyName);
 			Assert.AreEqual("E:Microsoft.Win32.SystemEvents.PowerModeChanged", symbol.IndexId);
+
+			symbol = new VBResolver().GetSymbolAt(fileName, textView.FindSpan("AddHandler Microsoft.Win32").End);
+			Assert.IsNull(symbol, "Namespaces should not be resolved");
 
 			symbol = new VBResolver().GetSymbolAt(fileName, textView.FindSpan("str.Aggregate").End);
 			Assert.AreEqual("System.Core", symbol.AssemblyName);

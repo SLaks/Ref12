@@ -106,10 +106,9 @@ namespace SLaks.Ref12.Services {
 					return null; //"vb.ExtensionMethods";
 				}
 			}
-			VBNamespace vBNamespace = symbol as VBNamespace;
-			if (vBNamespace != null && vBNamespace.Name.EqualsNoCase("My")) {
-				return null; //"vb.My";
-			}
+			if (symbol is VBNamespace)
+				return null;
+
 			if (symbol != null) {
 				// CodeBuilder adds unavoidable spaces; IndexIds never have spaces.
 				return symbol.ToString(new IndexIdSymbolFormatter()).Replace(" ", "");
