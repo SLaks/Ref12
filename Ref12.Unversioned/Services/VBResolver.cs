@@ -26,10 +26,11 @@ namespace SLaks.Ref12.Services {
 		private static SymbolInfo Walk(SyntaxNode node, Position location) {
 
 			foreach (var c in node.Children) {
-				if (c.Span.End < location)
+				// VariableGroupWithNewNodes can have
+				// out-of-order children, so I cannot
+				// exit the loop early.
+				if (c.Span.End < location || c.Span.Start > location)
 					continue;
-				if (c.Span.Start > location)
-					return null;
 
 				if (c.Children.Any())
 					return Walk(c, location);
