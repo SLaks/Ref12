@@ -117,6 +117,11 @@ namespace SLaks.Ref12.Services {
 			return null;
 		}
 
+		static TypeNode ImmediateTypeParent(SyntaxNode node) {
+			while (node is NameNode)
+				node = node.Parent;
+			return node as TypeNode;
+		}
 		private static SymbolInfo GetSymbolInfo(SyntaxNode node) {
 			if (node is IdentifierNode) {
 				node = node.Parent;
@@ -140,6 +145,14 @@ namespace SLaks.Ref12.Services {
 				node = qualifiedNode;
 				qualifiedNode = (node.Parent as QualifiedNode);
 			}
+
+			// If the current symbol is the type immediately
+			// in a New() invocation (as opposed to a nested
+			// generic type), use the constructor.
+			var typeNode = ImmediateTypeParent(node);
+			if (typeNode != null)
+				node = typeNode.Parent as NewNode ?? node;
+
 			if (node.Parent is ICallSiteNode || node.Parent is NewNode) {
 				node = node.Parent;
 			}
@@ -160,10 +173,14 @@ namespace SLaks.Ref12.Services {
 					symbol = node.Tree.SourceFile.Binder.ResolveName(name);
 				}
 			} else {
-				BoundNode boundNode = node.Tree.SourceFile.Binder.CompileExpression(node);
-				if (boundNode != null) {
-					symbol = boundNode.ExtractSymbol();
-				}
+				var expression = node.Tree.SourceFile.Binder.CompileExpression(node);
+				var boundCtor = expression as NewExpression;
+
+				// ExtractSymbol() resovles ctor calls to the type, not the ctor. (no clue why)
+				if (boundCtor != null)
+					symbol = boundCtor.ConstructorCall.ExtractSymbol();
+				else if (expression != null)
+					symbol = expression.ExtractSymbol();
 			}
 			if (symbol == null)
 				return null;
@@ -239,6 +256,10 @@ namespace SLaks.Ref12.Services {
 				Prefix("P:");
 				base.VisitProperty(node);
 			}
+			protected override void VisitConstructor(VBMember node) {
+				Prefix("M:");
+				base.VisitConstructor(node);
+			}
 			protected override void VisitMethod(VBMember node) {
 				Prefix("M:");
 				base.VisitMethod(node);
@@ -262,7 +283,7 @@ namespace SLaks.Ref12.Services {
 				VisitBaseQualifier(node.ContainingType);
 				string text;
 				if (node.IsConstructor) {
-					text = ".ctor";		// IndexId uses ".ctor", not "#ctor"
+					text = "ctor";		// IndexId uses "ctor", not "#ctor"
 				} else if (node.IsProperty && node.IsDefault) {
 					text = "Item";	// TODO: Test indexer
 				} else {

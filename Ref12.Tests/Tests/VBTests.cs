@@ -59,10 +59,18 @@ namespace Ref12.Tests {
 			Assert.AreEqual("System.Core", symbol.AssemblyName);
 			Assert.AreEqual("M:System.Linq.Enumerable.Aggregate``2(System.Collections.Generic.IEnumerable{``0},``1,System.Func{``1,``0,``1})", symbol.IndexId);
 
-			symbol = new VBResolver().GetSymbolAt(fileName, textView.FindSpan("o As New List").End);
+			symbol = new VBResolver().GetSymbolAt(fileName, textView.FindSpan("o = New List").End);
 			Assert.AreEqual("M:System.Collections.Generic.List`1.ctor(System.Collections.Generic.IEnumerable{`0})", symbol.IndexId);
 
-			symbol = new VBResolver().GetSymbolAt(fileName, textView.FindSpan("List(Of Func").End);
+			symbol = new VBResolver().GetSymbolAt(fileName, textView.FindSpan("New System.Collections.Gene").End);
+			Assert.AreEqual("M:System.Collections.Generic.List`1.ctor(System.Collections.Generic.IEnumerable{`0})", symbol.IndexId);
+			symbol = new VBResolver().GetSymbolAt(fileName, textView.FindSpan("New System.Collections.Generic.List").End);
+			Assert.AreEqual("M:System.Collections.Generic.List`1.ctor(System.Collections.Generic.IEnumerable{`0})", symbol.IndexId);
+
+			symbol = new VBResolver().GetSymbolAt(fileName, textView.FindSpan("e = New Exception").End);
+			Assert.AreEqual("M:System.Exception.ctor", symbol.IndexId);
+
+			symbol = new VBResolver().GetSymbolAt(fileName, textView.FindSpan("New List(Of Func").End);
 			Assert.AreEqual("T:System.Func`2", symbol.IndexId);
 
 			symbol = new VBResolver().GetSymbolAt(fileName, textView.FindSpan("o.ConvertAll").End);
