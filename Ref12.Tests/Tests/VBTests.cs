@@ -33,7 +33,7 @@ namespace Ref12.Tests {
 		[HostType("VS IDE")]
 		public async Task VBResolverTest() {
 			var fileName = Path.GetFullPath(Path.Combine(SolutionDir, "Basic", "File.vb"));
-			DTE.ItemOperations.OpenFile(fileName);
+			DTE.ItemOperations.OpenFile(fileName).Activate();
 			var textView = GetCurentTextView();
 
 			// Hop on to the UI thread so the language service APIs work
@@ -53,8 +53,6 @@ namespace Ref12.Tests {
 
 			symbol = new VBResolver().GetSymbolAt(fileName, textView.FindSpan("AddHandler SystemEvents.PowerModeChanged").End);
 			Assert.AreEqual("System", symbol.AssemblyName);
-			Assert.AreEqual("E:Microsoft.Win32.SystemEvents.PowerModeChanged", symbol.IndexId);
-			symbol = new VBResolver().GetSymbolAt(fileName, textView.FindSpan("AddHandler").End);
 			Assert.AreEqual("E:Microsoft.Win32.SystemEvents.PowerModeChanged", symbol.IndexId);
 
 			symbol = new VBResolver().GetSymbolAt(fileName, textView.FindSpan("str.Aggregate").End);
