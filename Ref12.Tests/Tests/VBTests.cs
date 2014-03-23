@@ -60,7 +60,7 @@ namespace Ref12.Tests {
 			Assert.AreEqual("M:System.Linq.Enumerable.Aggregate``2(System.Collections.Generic.IEnumerable{``0},``1,System.Func{``1,``0,``1})", symbol.IndexId);
 
 			symbol = new VBResolver().GetSymbolAt(fileName, textView.FindSpan("o As New List").End);
-			Assert.AreEqual("M:System.Collections.Generic.List`1.ctor", symbol.IndexId);
+			Assert.AreEqual("M:System.Collections.Generic.List`1.ctor(System.Collections.Generic.IEnumerable{`0})", symbol.IndexId);
 
 			symbol = new VBResolver().GetSymbolAt(fileName, textView.FindSpan("List(Of Func").End);
 			Assert.AreEqual("T:System.Func`2", symbol.IndexId);
@@ -85,6 +85,9 @@ namespace Ref12.Tests {
 
 			symbol = new VBResolver().GetSymbolAt(fileName, textView.FindSpan("iInt.Item").End);
 			Assert.AreEqual("P:System.Collections.ObjectModel.Collection`1.Item(System.Int32)", symbol.IndexId);
+
+			symbol = new VBResolver().GetSymbolAt(fileName, textView.FindSpan("ns +").End);
+			Assert.AreEqual("M:System.Xml.Linq.XNamespace.op_Addition(System.Xml.Linq.XNamespace,System.String)", symbol.IndexId);
 		}
 
 		///<summary>Gets the TextView for the active document.</summary>
