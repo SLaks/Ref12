@@ -6,8 +6,7 @@ using Microsoft.VisualStudio.Text;
 namespace SLaks.Ref12 {
 	///<summary>Redirects loads of unversioned VS reference assemblies to the version in the current VS instance.</summary>
 	public static partial class AssemblyRedirector {
-		static bool field;
-		public static void Register() { field.ToString(); }	// Force static initializer to run
+		public static void Register() { }		// Force static initializer to run
 		static AssemblyRedirector() {
 			AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
 		}
