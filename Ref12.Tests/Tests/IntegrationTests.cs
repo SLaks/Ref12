@@ -59,7 +59,7 @@ namespace Ref12.Tests {
 		[TestMethod]
 		[HostType("VS IDE")]
 		public async Task CSharpGoToDefTest() {
-			DTE.ItemOperations.OpenFile(Path.Combine(SolutionDir, "CSharp", "File.cs"));
+			DTE.ItemOperations.OpenFile(Path.Combine(SolutionDir, "CSharp", "File.cs")).Activate();
 			var textView = GetCurentTextView();
 
 			// Wait for the interceptor to attach (after an AppIdle), and hop onto the UI thread
