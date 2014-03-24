@@ -7,8 +7,7 @@ using Microsoft.VisualStudio.Text;
 namespace SLaks.Ref12.Services {
 	class CSharp12Resolver : ISymbolResolver {
 		static CSharp12Resolver() {
-			AssemblyRedirector.TargetNames.Add("Microsoft.VisualStudio.CSharp.Services.Language");
-			AssemblyRedirector.TargetNames.Add("Microsoft.VisualStudio.CSharp.Services.Language.Interop");
+			AssemblyRedirector.Register();
 		}
 
 		public SymbolInfo GetSymbolAt(string sourceFileName, SnapshotPoint point) {

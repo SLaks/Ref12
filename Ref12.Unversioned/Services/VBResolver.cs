@@ -9,9 +9,7 @@ using Microsoft.VisualStudio.Text;
 namespace SLaks.Ref12.Services {
 	public class VBResolver : ISymbolResolver {
 		static VBResolver() {
-			AssemblyRedirector.TargetNames.Add("Microsoft.VisualBasic.Editor");
-			AssemblyRedirector.TargetNames.Add("Microsoft.VisualBasic.LanguageService");
-			AssemblyRedirector.TargetNames.Add("Microsoft.VisualStudio.VisualBasic.LanguageService");
+			AssemblyRedirector.Register();
 		}
 
 		public SymbolInfo GetSymbolAt(string sourceFileName, SnapshotPoint point) {

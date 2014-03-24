@@ -16,8 +16,7 @@ using Microsoft.VisualStudio.Text;
 namespace SLaks.Ref12.Services {
 	class CSharp10Resolver : ISymbolResolver {
 		static CSharp10Resolver() {
-			AssemblyRedirector.TargetNames.Add("Microsoft.VisualStudio.CSharp.Services.Language");
-			AssemblyRedirector.TargetNames.Add("Microsoft.VisualStudio.CSharp.Services.Language.Interop");
+			AssemblyRedirector.Register();
 		}
 
 		private readonly Lazy<IDECompilerHost> compilerHost = new Lazy<IDECompilerHost>();

@@ -55,10 +55,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.VisualStudio.CSharp.Services.Language, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <Reference Include="Reference.Microsoft.VisualStudio.CSharp.Services.Language, Version=10.0.0.0, Culture=neutral">
       <Private>False</Private>
     </Reference>
-    <Reference Include="Microsoft.VisualStudio.CSharp.Services.Language.Interop, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <Reference Include="Reference.Microsoft.VisualStudio.CSharp.Services.Language.Interop, Version=10.0.0.0, Culture=neutral">
       <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.VisualStudio.Shell.10.0, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">

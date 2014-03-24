@@ -9,7 +9,7 @@ using Microsoft.VisualStudio.CSharp.Services.Language.Refactoring;
 namespace SLaks.Ref12.Services {
 	public static class RQNameTranslator {
 		static RQNameTranslator() {
-			AssemblyRedirector.TargetNames.Add("Microsoft.VisualStudio.CSharp.Services.Language");
+			AssemblyRedirector.Register();
 		}
 
 		public static string ToIndexId(string rqName) {
