@@ -97,8 +97,9 @@ namespace Ref12.Tests {
 			symbol = new VBResolver().GetSymbolAt(fileName, textView.FindSpan("iInt.Item").End);
 			Assert.AreEqual("P:System.Collections.ObjectModel.Collection`1.Item(System.Int32)", symbol.IndexId);
 
-			symbol = new VBResolver().GetSymbolAt(fileName, textView.FindSpan("ns +").End);
-			Assert.AreEqual("M:System.Xml.Linq.XNamespace.op_Addition(System.Xml.Linq.XNamespace,System.String)", symbol.IndexId);
+			// TODO: Wait for the reference source to support operators.
+			//symbol = new VBResolver().GetSymbolAt(fileName, textView.FindSpan("ns +").End);
+			//Assert.AreEqual("M:System.Xml.Linq.XNamespace.op_Addition(System.Xml.Linq.XNamespace,System.String)", symbol.IndexId);
 		}
 
 		///<summary>Gets the TextView for the active document.</summary>
