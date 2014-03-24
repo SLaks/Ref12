@@ -278,6 +278,8 @@ namespace SLaks.Ref12.Services {
 			bool inCoreType = true;
 			protected override void VisitMember(VBMember node) {
 				VisitBaseQualifier(node.ContainingType);
+				inCoreType = false;
+
 				string text;
 				if (node.IsConstructor) {
 					text = "ctor";		// IndexId uses "ctor", not "#ctor"
@@ -305,7 +307,6 @@ namespace SLaks.Ref12.Services {
 				Code.Append(node.Name);
 
 				if (inCoreType) {
-					inCoreType = false;
 					if (node.TypeParameters.Count > 0)
 						Code.Append("`" + node.TypeParameters.Count);
 				} else {
@@ -320,10 +321,10 @@ namespace SLaks.Ref12.Services {
 			protected override void VisitTypeParameter(VBType node) {
 				// Method type parameters get two backticks
 				if (node.ContainingType == null)
-					Code.Append("`");
-				Code.Append("`");
-				// Type type parameter indices include parameters from the type's outer types.
-				Code.Append((PreTypeParamCount(node) + node.TypeParameterPosition).ToString());
+					Code.Append("``" + node.TypeParameterPosition);
+				else
+					// Type type parameter indices include parameters from the type's outer types.
+					Code.Append("`" + (PreTypeParamCount(node.ContainingType) + node.TypeParameterPosition).ToString());
 			}
 			///<summary>Gets the total number of type parameters in this type's outer generic types.</summary>
 			static int PreTypeParamCount(VBType type) {
