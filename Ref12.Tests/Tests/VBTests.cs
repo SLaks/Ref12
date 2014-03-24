@@ -44,6 +44,7 @@ namespace Ref12.Tests {
 			Assert.AreEqual("T:System.Lazy`1", symbol.IndexId);
 
 			symbol = new VBResolver().GetSymbolAt(fileName, textView.FindSpan("Environment.SetEnvironmentVariable(\"").End - 4);
+			Assert.IsFalse(symbol.HasLocalSource);
 			Assert.AreEqual("mscorlib", symbol.AssemblyName);
 			Assert.AreEqual("M:System.Environment.SetEnvironmentVariable(System.String,System.String,System.EnvironmentVariableTarget)", symbol.IndexId);
 
@@ -52,6 +53,7 @@ namespace Ref12.Tests {
 			Assert.AreEqual("F:System.EnvironmentVariableTarget.Process", symbol.IndexId);
 
 			symbol = new VBResolver().GetSymbolAt(fileName, textView.FindSpan("AddHandler Microsoft.Win32.SystemEvents.PowerModeChanged").End);
+			Assert.IsFalse(symbol.HasLocalSource);
 			Assert.AreEqual("System", symbol.AssemblyName);
 			Assert.AreEqual("E:Microsoft.Win32.SystemEvents.PowerModeChanged", symbol.IndexId);
 
@@ -59,6 +61,7 @@ namespace Ref12.Tests {
 			Assert.IsNull(symbol, "Namespaces should not be resolved");
 
 			symbol = new VBResolver().GetSymbolAt(fileName, textView.FindSpan("str.Aggregate").End);
+			Assert.IsFalse(symbol.HasLocalSource);
 			Assert.AreEqual("System.Core", symbol.AssemblyName);
 			Assert.AreEqual("M:System.Linq.Enumerable.Aggregate``2(System.Collections.Generic.IEnumerable{``0},``1,System.Func{``1,``0,``1})", symbol.IndexId);
 

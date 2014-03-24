@@ -68,13 +68,41 @@ namespace Ref12.Tests {
 
 			textView.Caret.MoveTo(textView.FindSpan("Environment.GetFolderPath").End);
 			GetCurrentNativeTextView().Execute(VSConstants.VSStd97CmdID.GotoDefn);
+			Assert.IsFalse(sourceRecord.LastSymbol.HasLocalSource);
 			Assert.AreEqual("mscorlib", sourceRecord.LastSymbol.AssemblyName);
 			Assert.AreEqual("M:System.Environment.GetFolderPath(System.Environment.SpecialFolder)", sourceRecord.LastSymbol.IndexId);
 
 			textView.Caret.MoveTo(textView.FindSpan("Environment.SpecialFolder.CommonOemLinks").End);
 			GetCurrentNativeTextView().Execute(VSConstants.VSStd97CmdID.GotoDefn);
+			Assert.IsFalse(sourceRecord.LastSymbol.HasLocalSource);
 			Assert.AreEqual("mscorlib", sourceRecord.LastSymbol.AssemblyName);
 			Assert.AreEqual("F:System.Environment.SpecialFolder.CommonOemLinks", sourceRecord.LastSymbol.IndexId);
+		}
+
+		[TestMethod]
+		public async Task CSharp10ResolverTest() {
+			await TestCSharpResolver(new CSharp10Resolver(DTE));
+		}
+		[TestMethod]
+		public async Task CSharp12ResolverTest() {
+			if (DTE.Version != "12.0")
+				Assert.Inconclusive("CSharp12Resolver only works in VS 2013");
+
+			await TestCSharpResolver(new CSharp10Resolver(DTE));
+		}
+		private async Task TestCSharpResolver(ISymbolResolver resolver) {
+			var fileName = Path.Combine(SolutionDir, "CSharp", "File.cs");
+			DTE.ItemOperations.OpenFile(fileName).Activate();
+			var textView = GetCurentTextView();
+
+			// Hop onto the UI thread
+			await Application.Current.Dispatcher.NextFrame(DispatcherPriority.ApplicationIdle);
+			await Application.Current.Dispatcher.NextFrame(DispatcherPriority.ApplicationIdle);
+
+			var symbol = resolver.GetSymbolAt(fileName, textView.FindSpan("\"\".Aggregate").End);
+			Assert.IsFalse(symbol.HasLocalSource);
+			Assert.AreEqual("System.Core", symbol.AssemblyName);
+			Assert.AreEqual("M:System.Linq.Enumerable.Aggregate``2(System.Collections.Generic.IEnumerable{``0},``1,System.Func{``1,``0,``1})", symbol.IndexId);
 		}
 
 		///<summary>Gets the TextView for the active document.</summary>

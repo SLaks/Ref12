@@ -5,16 +5,16 @@ using System.Runtime.InteropServices;
 using Microsoft.VisualStudio.Text;
 
 namespace SLaks.Ref12.Services {
-	class CSharp12Resolver : ISymbolResolver {
+	public class CSharp12Resolver : ISymbolResolver {
 		static CSharp12Resolver() {
 			AssemblyRedirector.Register();
 		}
 
 		public SymbolInfo GetSymbolAt(string sourceFileName, SnapshotPoint point) {
 			var result = GetGoToDefLocations(sourceFileName, point).FirstOrDefault();
-			if (result == null || !result.IsMetadata)
+			if (result == null)
 				return null;
-			return new SymbolInfo(RQNameTranslator.ToIndexId(result.RQName), result.AssemblyBinaryName);
+			return new SymbolInfo(RQNameTranslator.ToIndexId(result.RQName), !result.IsMetadata, result.AssemblyBinaryName);
 		}
 
 

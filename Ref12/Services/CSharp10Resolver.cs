@@ -14,7 +14,7 @@ using Microsoft.VisualStudio.CSharp.Services.Language.Refactoring;
 using Microsoft.VisualStudio.Text;
 
 namespace SLaks.Ref12.Services {
-	class CSharp10Resolver : ISymbolResolver {
+	public class CSharp10Resolver : ISymbolResolver {
 		static CSharp10Resolver() {
 			AssemblyRedirector.Register();
 		}
@@ -29,9 +29,9 @@ namespace SLaks.Ref12.Services {
 		public SymbolInfo GetSymbolAt(string sourceFileName, SnapshotPoint point) {
 			var project = dte.Solution.FindProjectItem(sourceFileName).ContainingProject;
 			var result = GetNode(point, project, sourceFileName);
-			if (result == null || result.DefinitionFiles.Any()) // Skip symbols in the current solution
+			if (result == null)
 				return null;
-			return new SymbolInfo(RQNameTranslator.ToIndexId(result.RQName), result.AssemblyName);
+			return new SymbolInfo(RQNameTranslator.ToIndexId(result.RQName), result.DefinitionFiles.Any(), result.AssemblyName);
 		}
 
 		private NativeMethods.FindSourceDefinitionsAndDetermineSymbolResult GetNode(SnapshotPoint point, Project project, string fileName) {

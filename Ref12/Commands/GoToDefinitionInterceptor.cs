@@ -39,7 +39,7 @@ namespace SLaks.Ref12.Commands {
 				return false;
 
 			var symbol = resolver.GetSymbolAt(doc.FilePath, caretPoint.Value);
-			if (symbol == null)
+			if (symbol == null || symbol.HasLocalSource)
 				return false;
 
 			var target = references.FirstOrDefault(r => r.AvailableAssemblies.Contains(symbol.AssemblyName));

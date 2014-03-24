@@ -185,7 +185,7 @@ namespace SLaks.Ref12.Services {
 			string indexId = ToIndexId(symbol, node.Tree.SourceFile);
 			if (indexId == null)
 				return null;
-			return new SymbolInfo(indexId, symbol.Assembly.BinaryFileName);
+			return new SymbolInfo(indexId, symbol.SourceFile != null, symbol.Assembly.BinaryFileName);
 		}
 
 		sealed class IndexIdSymbolFormatter : SymbolFormatter {
