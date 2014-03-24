@@ -103,6 +103,10 @@ namespace Ref12.Tests {
 			Assert.IsFalse(symbol.HasLocalSource);
 			Assert.AreEqual("System.Core", symbol.AssemblyName);
 			Assert.AreEqual("M:System.Linq.Enumerable.Aggregate``2(System.Collections.Generic.IEnumerable{``0},``1,System.Func{``1,``0,``1})", symbol.IndexId);
+
+			symbol = resolver.GetSymbolAt(fileName, textView.FindSpan("void M<").End - 1);
+			Assert.IsTrue(symbol.HasLocalSource);
+			Assert.AreEqual("M:CSharp.File.A`1.B`1.M``1(`1,`0,``0)", symbol.IndexId);
 		}
 
 		///<summary>Gets the TextView for the active document.</summary>

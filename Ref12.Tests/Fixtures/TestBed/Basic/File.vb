@@ -51,9 +51,9 @@ Public Class File
 	End Sub
 	Class A(Of T, W)
 		Class B(Of U, X)
-			'M:VBClassLibrary.Class1.A`2.B`2.M``1(`1,`0,``0)
+			'M:Basic.File.A`2.B`2.M``1(`2,`0,``0)
 			Sub M(Of V)(a As U, b As T, c As V)
-
+				Call M(a, b, c)
 			End Sub
 		End Class
 	End Class
