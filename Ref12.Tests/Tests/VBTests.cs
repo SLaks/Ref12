@@ -100,6 +100,8 @@ namespace Ref12.Tests {
 			symbol = new VBResolver().GetSymbolAt(fileName, textView.FindSpan("iInt.Item").End);
 			Assert.AreEqual("P:System.Collections.ObjectModel.Collection`1.Item(System.Int32)", symbol.IndexId);
 
+			System.Diagnostics.Debugger.Launch();
+
 			symbol = new VBResolver().GetSymbolAt(fileName, textView.FindSpan("Call M(").End - 1);
 			Assert.IsTrue(symbol.HasLocalSource);
 			Assert.AreEqual("M:Basic.File.A`2.B`2.M``1(`2,`0,``0)", symbol.IndexId);
