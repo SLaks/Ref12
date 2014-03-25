@@ -26,16 +26,16 @@ namespace SLaks.Ref12.Services {
 		[ImportingConstructor]
 		public ReferenceSourceProvider(ILogger logger) {
 			this.logger = logger;
-			timer = new Timer(_ => LookupService(), null, 0, (int)TimeSpan.FromMinutes(60).TotalMilliseconds);
+			timer = new Timer(async _ => await LookupService(), null, 0, (int)TimeSpan.FromMinutes(60).TotalMilliseconds);
 			AvailableAssemblies = new HashSet<string>();
 
 			NetworkChange.NetworkAvailabilityChanged += (s, e) => {
 				if (e.IsAvailable)
-					LookupService().ToString(); // Fire and forget
+					LookupService().ToString();	// Fire and forget
 				else
 					AvailableAssemblies = new HashSet<string>();
 			};
-			NetworkChange.NetworkAddressChanged += (s, e) => LookupService();
+			NetworkChange.NetworkAddressChanged += async (s, e) => await LookupService();
 		}
 
 
