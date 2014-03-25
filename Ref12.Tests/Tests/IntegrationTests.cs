@@ -91,7 +91,7 @@ namespace Ref12.Tests {
 			await TestCSharpResolver(new CSharp10Resolver(DTE));
 		}
 		private async Task TestCSharpResolver(ISymbolResolver resolver) {
-			var fileName = Path.Combine(SolutionDir, "CSharp", "File.cs");
+			var fileName = Path.GetFullPath(Path.Combine(SolutionDir, "CSharp", "File.cs"));
 			DTE.ItemOperations.OpenFile(fileName).Activate();
 			var textView = GetCurentTextView();
 
@@ -106,7 +106,7 @@ namespace Ref12.Tests {
 
 			symbol = resolver.GetSymbolAt(fileName, textView.FindSpan("void M<").End - 1);
 			Assert.IsTrue(symbol.HasLocalSource);
-			Assert.AreEqual("M:CSharp.File.A`1.B`1.M``1(`1,`0,``0)", symbol.IndexId);
+			Assert.AreEqual("M:CSharp.File.A`1.B`1.M``1(`0,`1,`0,``0)", symbol.IndexId);
 		}
 
 		///<summary>Gets the TextView for the active document.</summary>

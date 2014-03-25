@@ -9,12 +9,11 @@ namespace CSharp {
 			SystemEvents.PowerModeChanged += (s, e) => e.Mode.ToString();
 			"".Aggregate(new Exception(), (e, c) => new Exception(e.Message + c));
 		}
-	}
-	class A<T> {
-		class B<U> {
-			// M:ClassLibrary1.A`1.B`1.M``1(`1,`0,``0)
-			void M<V>(U a, T b, V c) { }
+		class A<T> {
+			class B<U> {
+				// M:CSharp.File.A`1.B`1.M``1(`0,`1,`0,``0)
+				void M<V>(T x, U a, T b, V c) { }
+			}
 		}
 	}
-
 }
