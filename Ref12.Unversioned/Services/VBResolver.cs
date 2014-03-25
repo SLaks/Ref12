@@ -328,9 +328,9 @@ namespace SLaks.Ref12.Services {
 			}
 			///<summary>Gets the total number of type parameters in this type's outer generic types.</summary>
 			static int PreTypeParamCount(VBType type) {
-				if (type.DefiningType == null)
+				if (type.ContainingType == null)
 					return 0;
-				return PreTypeParamCount(type.DefiningType) + type.DefiningType.TypeParameters.Count;
+				return PreTypeParamCount(type.ContainingType) + type.ContainingType.TypeParameters.Count;
 			}
 		}
 	}
