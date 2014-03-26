@@ -4,7 +4,6 @@ using System.ComponentModel.Composition.Hosting;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Threading;
 using EnvDTE;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.ComponentModelHost;
@@ -41,6 +40,8 @@ namespace Ref12.Tests {
 
 		static readonly RecordingSourceProvider sourceRecord = new RecordingSourceProvider();
 		private static IComponentModel componentModel;
+		private static string fileName;
+		private static ITextView textView;
 
 		[ClassInitialize]
 		public static void PrepareSolution(TestContext context) {
@@ -49,6 +50,11 @@ namespace Ref12.Tests {
 			var part = AttributedModelServices.CreatePart(sourceRecord);
 			componentModel = (IComponentModel)VsIdeTestHostContext.ServiceProvider.GetService(typeof(SComponentModel));
 			((CompositionContainer)componentModel.DefaultCompositionService).Compose(new CompositionBatch(new[] { part }, null));
+
+			fileName = Path.GetFullPath(Path.Combine(SolutionDir, "CSharp", "File.cs"));
+			DTE.ItemOperations.OpenFile(fileName).Activate();
+			textView = GetCurentTextView();
+			System.Threading.Thread.Sleep(2000);	// Wait for the language service to bind the file; this can really take 2 seconds
 		}
 
 		[TestInitialize]
@@ -59,12 +65,8 @@ namespace Ref12.Tests {
 		[TestMethod]
 		[HostType("VS IDE")]
 		public async Task CSharpGoToDefTest() {
-			DTE.ItemOperations.OpenFile(Path.Combine(SolutionDir, "CSharp", "File.cs")).Activate();
-			var textView = GetCurentTextView();
-
-			// Wait for the interceptor to attach (after an AppIdle), and hop onto the UI thread
-			await Application.Current.Dispatcher.NextFrame(DispatcherPriority.ApplicationIdle);
-			await Application.Current.Dispatcher.NextFrame(DispatcherPriority.ApplicationIdle);
+			// Hop on to the UI thread so the language service APIs work
+			await Application.Current.Dispatcher.NextFrame();
 
 			textView.Caret.MoveTo(textView.FindSpan("Environment.GetFolderPath").End);
 			GetCurrentNativeTextView().Execute(VSConstants.VSStd97CmdID.GotoDefn);
@@ -91,13 +93,8 @@ namespace Ref12.Tests {
 			await TestCSharpResolver(new CSharp10Resolver(DTE));
 		}
 		private async Task TestCSharpResolver(ISymbolResolver resolver) {
-			var fileName = Path.GetFullPath(Path.Combine(SolutionDir, "CSharp", "File.cs"));
-			DTE.ItemOperations.OpenFile(fileName).Activate();
-			var textView = GetCurentTextView();
-
-			// Hop onto the UI thread
-			await Application.Current.Dispatcher.NextFrame(DispatcherPriority.ApplicationIdle);
-			await Application.Current.Dispatcher.NextFrame(DispatcherPriority.ApplicationIdle);
+			// Hop on to the UI thread so the language service APIs work
+			await Application.Current.Dispatcher.NextFrame();
 
 			var symbol = resolver.GetSymbolAt(fileName, textView.FindSpan("\"\".Aggregate").End);
 			Assert.IsFalse(symbol.HasLocalSource);
