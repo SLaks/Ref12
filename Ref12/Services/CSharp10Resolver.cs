@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using EnvDTE;
+using Microsoft.RestrictedUsage.CSharp.Compiler;
 using Microsoft.RestrictedUsage.CSharp.Compiler.IDE;
 using Microsoft.RestrictedUsage.CSharp.Core;
 using Microsoft.RestrictedUsage.CSharp.Extensions;
@@ -35,7 +36,11 @@ namespace SLaks.Ref12.Services {
 		}
 
 		private NativeMethods.FindSourceDefinitionsAndDetermineSymbolResult GetNode(SnapshotPoint point, Project project, string fileName) {
-			var compiler = compilerHost.Value.CreateCompiler(project);
+			Compiler compiler;
+			try {
+				compiler = compilerHost.Value.CreateCompiler(project);
+			} catch (COMException) { return null; }	// Don't choke on metadata as source
+
 			var sourceFile = compiler.SourceFiles[new FileName(fileName)];
 
 			var node = sourceFile.GetParseTree().FindLeafNode(CSharpLanguageUtilities.ToPosition(point));

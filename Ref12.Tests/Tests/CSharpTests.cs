@@ -4,11 +4,13 @@ using System.ComponentModel.Composition.Hosting;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Threading;
 using EnvDTE;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.ComponentModelHost;
 using Microsoft.VisualStudio.Editor;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.TextManager.Interop;
 using Microsoft.VSSDK.Tools.VsIdeTesting;
@@ -54,7 +56,7 @@ namespace Ref12.Tests {
 			fileName = Path.GetFullPath(Path.Combine(SolutionDir, "CSharp", "File.cs"));
 			DTE.ItemOperations.OpenFile(fileName).Activate();
 			textView = GetCurentTextView();
-			System.Threading.Thread.Sleep(2000);	// Wait for the language service to bind the file; this can really take 2 seconds
+			System.Threading.Thread.Sleep(2500);	// Wait for the language service to bind the file; this can really take 2 seconds
 		}
 
 		[TestInitialize]
@@ -66,7 +68,7 @@ namespace Ref12.Tests {
 		[HostType("VS IDE")]
 		public async Task CSharpGoToDefTest() {
 			// Hop on to the UI thread so the language service APIs work
-			await Application.Current.Dispatcher.NextFrame();
+			await Application.Current.Dispatcher.NextFrame(DispatcherPriority.ApplicationIdle);
 
 			textView.Caret.MoveTo(textView.FindSpan("Environment.GetFolderPath").End);
 			GetCurrentNativeTextView().Execute(VSConstants.VSStd97CmdID.GotoDefn);
@@ -79,6 +81,31 @@ namespace Ref12.Tests {
 			Assert.IsFalse(sourceRecord.LastSymbol.HasLocalSource);
 			Assert.AreEqual("mscorlib", sourceRecord.LastSymbol.AssemblyName);
 			Assert.AreEqual("F:System.Environment.SpecialFolder.CommonOemLinks", sourceRecord.LastSymbol.IndexId);
+		}
+
+		[TestMethod]
+		[HostType("VS IDE")]
+		public async Task CSharpMetadataTest() {
+			// Hop on to the UI thread so the language service APIs work
+			await Application.Current.Dispatcher.NextFrame(DispatcherPriority.ApplicationIdle);
+
+			// Use a type that is not in the public reference source
+			textView.Caret.MoveTo(textView.FindSpan("System.IO.Log.LogStore").End);
+			GetCurrentNativeTextView().Execute(VSConstants.VSStd97CmdID.GotoDefn);
+
+			var metadataTextView = GetCurentTextView();
+			var docService = componentModel.GetService<ITextDocumentFactoryService>();
+			ITextDocument document;
+			Assert.IsTrue(docService.TryGetTextDocument(metadataTextView.TextDataModel.DocumentBuffer, out document));
+			var symbol = new CSharp10Resolver(DTE).GetSymbolAt(document.FilePath, metadataTextView.FindSpan("public LogStore(SafeFileHandle").End);
+			Assert.IsNull(symbol);	// CSharp10Resolver cannot get a Compilation for metadata as source, but must not crash.
+
+			if (DTE.Version == "12.0") {
+				symbol = new CSharp12Resolver().GetSymbolAt(document.FilePath, metadataTextView.FindSpan("public LogStore(SafeFileHandle").End);
+				Assert.IsFalse(symbol.HasLocalSource);
+				Assert.AreEqual("mscorlib", symbol.AssemblyName);
+				Assert.AreEqual("T:Microsoft.Win32.SafeHandles.SafeFileHandle", symbol.IndexId);
+			}
 		}
 
 		[TestMethod]

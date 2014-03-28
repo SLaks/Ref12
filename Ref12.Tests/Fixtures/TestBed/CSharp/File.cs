@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.Linq;
 using Microsoft.Win32;
 
@@ -8,6 +9,7 @@ namespace CSharp {
 			var path = Environment.GetFolderPath(Environment.SpecialFolder.CommonOemLinks);
 			SystemEvents.PowerModeChanged += (s, e) => e.Mode.ToString();
 			"".Aggregate(new Exception(), (e, c) => new Exception(e.Message + c));
+			System.IO.Log.LogStore x;
 		}
 		class A<T> {
 			class B<U> {
