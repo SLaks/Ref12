@@ -48,6 +48,8 @@ Public Class File
 		'P:System.Collections.ObjectModel.Collection`1.Item(System.Int32)
 		iInt.Item(0).ToFileTime()
 
+		Dim x As System.IO.Log.LogStore
+
 		Dim ns As XNamespace = "http://slaks.net"
 		'M:System.Xml.Linq.XNamespace.op_Addition(System.Xml.Linq.XNamespace,System.String)
 		Dim n = ns + "a"

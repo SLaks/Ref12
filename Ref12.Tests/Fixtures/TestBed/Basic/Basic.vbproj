@@ -58,6 +58,7 @@
     <Compile Include="File.vb" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="System.IO.Log" />
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />

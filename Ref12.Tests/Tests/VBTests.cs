@@ -145,6 +145,23 @@ namespace Ref12.Tests {
 			Assert.AreEqual("M:Basic.File.A`2.B`2.M``1(`2,`0,``0)", symbol.IndexId);
 		}
 
+		[TestMethod]
+		[HostType("VS IDE")]
+		public async Task VBMetadataTest() {
+			// Hop on to the UI thread so the language service APIs work
+			await Application.Current.Dispatcher.NextFrame();
+
+			// Use a type that is not in the public reference source
+			textView.Caret.MoveTo(textView.FindSpan("System.IO.Log.LogStore").End);
+			GetCurrentNativeTextView().Execute(VSConstants.VSStd97CmdID.GotoDefn);
+
+			var metadataTextView = GetCurentTextView();
+			var symbol = new VBResolver().GetSymbolAt(fileName, metadataTextView.FindSpan("Public Sub New(handle As SafeFileHandle").End);
+			Assert.IsFalse(symbol.HasLocalSource);
+			Assert.AreEqual("mscorlib", symbol.AssemblyName);
+			Assert.AreEqual("T:Microsoft.Win32.SafeHandles.SafeFileHandle", symbol.IndexId);
+		}
+
 		///<summary>Gets the TextView for the active document.</summary>
 		public static ITextView GetCurentTextView() {
 			var editorAdapter = componentModel.GetService<IVsEditorAdaptersFactoryService>();
