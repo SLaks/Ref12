@@ -84,6 +84,27 @@ namespace Ref12.Tests {
 
 		[TestMethod]
 		[HostType("VS IDE")]
+		public async Task VBResolverParameterTests() {
+			// Hop on to the UI thread so the language service APIs work
+			await Application.Current.Dispatcher.NextFrame();
+
+			var symbol = new VBResolver().GetSymbolAt(fileName, textView.FindSpan("e.Message + c").End);
+			Assert.IsNull(symbol, "Lambda parameters should not be resolved");
+
+			Assert.Inconclusive("VB cannot resolve inferred lambda parameter types?");
+			System.Diagnostics.Debugger.Launch();
+
+			symbol = new VBResolver().GetSymbolAt(fileName, textView.FindSpan("Sub(myLL").End);
+			Assert.AreEqual("mscorlib", symbol.AssemblyName);
+			Assert.AreEqual("T:System.Collections.Generic.LinkedList`1", symbol.IndexId, "Lambda parameter declarations should resolve to open generic types");
+
+			symbol = new VBResolver().GetSymbolAt(fileName, textView.FindSpan("Function(e").End);
+			Assert.AreEqual("mscorlib", symbol.AssemblyName);
+			Assert.AreEqual("T:System.Exception", symbol.IndexId, "Lambda parameter declarations should resolve to their inferred types");
+		}
+
+		[TestMethod]
+		[HostType("VS IDE")]
 		public async Task VBResolverGenericsTests() {
 			// Hop on to the UI thread so the language service APIs work
 			await Application.Current.Dispatcher.NextFrame();

@@ -26,6 +26,9 @@ Public Class File
 		Dim o = New List(Of Func(Of Int32, DateTime))(collection:=Nothing)
 		o = New System.Collections.Generic.List(Of Func(Of Int32, DateTime))(collection:=Nothing)
 
+		'T:System.Collections.Generic.LinkedList`1
+		Dim f As Action(Of LinkedList(Of Integer)) = Sub(myLL) myLL.Clear()
+
 		'M:System.Exception.ctor
 		Dim ex = New Exception
 

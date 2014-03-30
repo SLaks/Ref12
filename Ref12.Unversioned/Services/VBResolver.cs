@@ -41,7 +41,7 @@ namespace SLaks.Ref12.Services {
 		private static string ToIndexId(Symbol symbol, ISourceFile file) {
 			VBParameter vBParameter = symbol as VBParameter;
 			if (vBParameter != null) {
-				symbol = vBParameter.ParameterType;
+				return null;
 			}
 			VBMember vBMember = symbol as VBMember;
 			if (vBMember != null) {
@@ -120,9 +120,6 @@ namespace SLaks.Ref12.Services {
 			return node as TypeNode;
 		}
 		private static SymbolInfo GetSymbolInfo(SyntaxNode node) {
-			if (node is IdentifierNode) {
-				node = node.Parent;
-			}
 			//if (node.Parent is NamedTypeNode) {
 			//	node = node.Parent;
 			//}
@@ -153,41 +150,67 @@ namespace SLaks.Ref12.Services {
 			if (node.Parent is ICallSiteNode || node.Parent is NewNode) {
 				node = node.Parent;
 			}
-			Symbol symbol = null;
-			NameNode name = node as NameNode;
-			if (name != null) {
-				if (name.Parent is DeclaratorNode && name.Parent.Parent is ParameterNode) {
-					LambdaNode lambdaNode = name.Parent.Parent.Parent as LambdaNode;
-					if (lambdaNode != null) {
-						LambdaExpression lambdaExpression = node.Tree.SourceFile.Binder.CompileExpression(lambdaNode) as LambdaExpression;
-						if (lambdaExpression != null) {
-							symbol = lambdaExpression.Parameters
-								.FirstOrDefault(p => p.Name.EqualsNoCase(((IdentifierNode)name).Name));
-						}
-					}
-				}
-				if (symbol == null) {
-					symbol = node.Tree.SourceFile.Binder.ResolveName(name);
-				}
-			} else {
-				var expression = node.Tree.SourceFile.Binder.CompileExpression(node);
-				var boundCtor = expression as NewExpression;
+			Symbol symbol;
 
-				// ExtractSymbol() resovles ctor calls to the type, not the ctor. (no clue why)
-				if (boundCtor != null)
-					symbol = boundCtor.ConstructorCall.ExtractSymbol();
-				else if (expression != null)
-					symbol = expression.ExtractSymbol();
+			var lambdaParam = ExtractLambdaParameter(node as NameNode);
+			// Pressing F12 on a lamba param declaration should jump to the parameter type
+			if (lambdaParam != null)
+				symbol = lambdaParam.ParameterType;
+			else {
+				if (node is IdentifierNode)
+					node = node.Parent;
+
+				var name = node as NameNode;
+				if (name != null)
+					symbol = node.Tree.SourceFile.Binder.ResolveName(name);
+				else {
+					var expression = node.Tree.SourceFile.Binder.CompileExpression(node);
+					var boundCtor = expression as NewExpression;
+
+					// ExtractSymbol() resolves ctor calls to the type, not the ctor. (no clue why)
+					if (boundCtor != null)
+						symbol = boundCtor.ConstructorCall.ExtractSymbol();
+					else if (expression != null)
+						symbol = expression.ExtractSymbol();
+					else
+						return null;
+				}
 			}
 			if (symbol == null)
 				return null;
+
+			// Lambda parameters are represented as member fields on the
+			// the containing type.  There is no way to distinguish them
+			// from actual fields in the semantic tree.  I check whether
+			// the symbol definition is in a lambda, and return nothing.
+			// F12 on a lambda parameter declaration is handled above.
+			var member = symbol as VBMember;
+			if (member != null && member.SourceFile != null && member.SourceFile.FileName == node.Tree.SourceFile.FileName) {
+				var memberDefinition = node.Tree.RootNode.Descendants(member.Span.Value.Start).LastOrDefault();
+				if (ExtractLambdaParameter(memberDefinition as NameNode) != null)
+					return null;
+			}
 
 			string indexId = ToIndexId(symbol, node.Tree.SourceFile);
 			if (indexId == null)
 				return null;
 			return new SymbolInfo(indexId, symbol.SourceFile != null, symbol.Assembly.BinaryFileName);
 		}
+		static VBParameter ExtractLambdaParameter(NameNode name) {
+			if (name == null)
+				return null;
+			if (!(name.Parent is DeclaratorNode) || !(name.Parent.Parent is ParameterNode))
+				return null;
 
+			LambdaNode lambdaNode = name.Parent.Parent.Parent as LambdaNode;
+			if (lambdaNode == null)
+				return null;
+			LambdaExpression lambdaExpression = name.Tree.SourceFile.Binder.CompileExpression(lambdaNode) as LambdaExpression;
+			if (lambdaExpression == null)
+				return null;
+			return lambdaExpression.Parameters
+				.FirstOrDefault(p => p.Name.EqualsNoCase(((IdentifierNode)name).Name));
+		}
 		sealed class IndexIdSymbolFormatter : SymbolFormatter {
 			protected override void VisitAnonymousDelegate(VBType node) {
 				Code.Append("vb#AnonymousType");
