@@ -53,6 +53,25 @@ namespace Ref12.Tests {
 
 		[TestMethod]
 		[HostType("VS IDE")]
+		public async Task VBResolverAttributeTests() {
+			// Hop on to the UI thread so the language service APIs work
+			await Application.Current.Dispatcher.NextFrame();
+
+			var symbol = new VBResolver().GetSymbolAt(fileName, textView.FindSpan("<AttributeUsage").End);
+			Assert.AreEqual("mscorlib", symbol.AssemblyName);
+			Assert.AreEqual("T:System.AttributeUsageAttribute", symbol.IndexId);
+
+			symbol = new VBResolver().GetSymbolAt(fileName, textView.FindSpan("AttributeUsage(AttributeTargets.All").End);
+			Assert.AreEqual("mscorlib", symbol.AssemblyName);
+			Assert.AreEqual("F:System.AttributeTargets.All", symbol.IndexId);
+
+			// I can't find any way to resolve attribute properties to their symbols.
+			//symbol = new VBResolver().GetSymbolAt(fileName, textView.FindSpan("AllowMultiple").End);
+			//Assert.AreEqual("P:System.AttributeUsageAttribute.AllowMultiple", symbol.IndexId);
+		}
+
+		[TestMethod]
+		[HostType("VS IDE")]
 		public async Task VBResolverMemberTests() {
 			// Hop on to the UI thread so the language service APIs work
 			await Application.Current.Dispatcher.NextFrame();

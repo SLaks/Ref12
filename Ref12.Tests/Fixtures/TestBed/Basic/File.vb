@@ -3,6 +3,7 @@ Imports System.Collections.ObjectModel
 Imports System.Linq
 Imports System.Xml.Linq
 
+<AttributeUsage(AttributeTargets.All, AllowMultiple:=True)>
 Public Class File
 	'T:System.Lazy`1
 	Inherits Lazy(Of Exception)

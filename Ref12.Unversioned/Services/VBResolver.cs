@@ -150,13 +150,15 @@ namespace SLaks.Ref12.Services {
 			if (lambdaParam != null)
 				symbol = lambdaParam.ParameterType;
 			else {
-				if (node is IdentifierNode)
-					node = node.Parent;
-
 				var name = node as NameNode;
-				if (name != null)
+				if (name != null) {
 					symbol = node.Tree.SourceFile.Binder.ResolveName(name);
-				else {
+					if (symbol == null && node is IdentifierNode) {
+						name = node.Parent as NameNode;
+						if (name != null)
+							symbol = name.Tree.SourceFile.Binder.ResolveName(name);
+					}
+				} else {
 					var expression = node.Tree.SourceFile.Binder.CompileExpression(node);
 					var boundCtor = expression as NewExpression;
 
