@@ -120,18 +120,11 @@ namespace SLaks.Ref12.Services {
 			return node as TypeNode;
 		}
 		private static SymbolInfo GetSymbolInfo(SyntaxNode node) {
-			//if (node.Parent is NamedTypeNode) {
-			//	node = node.Parent;
-			//}
-
 			QualifiedNameNode qualifiedNameNode = node.Parent as QualifiedNameNode;
 			if (qualifiedNameNode != null && qualifiedNameNode.Name == node) {
 				node = qualifiedNameNode;
 			}
 			if (node.Parent is NameExpressionNode) {
-				node = node.Parent;
-			}
-			if (node.Parent is GenericQualifiedNode) {
 				node = node.Parent;
 			}
 			QualifiedNode qualifiedNode = node.Parent as QualifiedNode;
