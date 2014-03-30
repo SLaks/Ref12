@@ -22,12 +22,12 @@ Public Class File
 		str.Aggregate(New Exception(), Function(e, c) New Exception(e.Message + c))
 
 		'M:System.Collections.Generic.List`1.ctor(System.Collections.Generic.IEnumerable{`0})
-		'T:System.Func`2	
+		'T:System.Func`2
 		Dim o = New List(Of Func(Of Int32, DateTime))(collection:=Nothing)
 		o = New System.Collections.Generic.List(Of Func(Of Int32, DateTime))(collection:=Nothing)
 
 		'M:System.Exception.ctor
-		Dim e = New Exception
+		Dim ex = New Exception
 
 		'M:System.Collections.Generic.List`1.ConvertAll``1(System.Converter{`0,``0})
 		'M:System.Func`2.Invoke(`0)

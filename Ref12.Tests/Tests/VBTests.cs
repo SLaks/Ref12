@@ -71,7 +71,7 @@ namespace Ref12.Tests {
 			Assert.AreEqual("System", symbol.AssemblyName);
 			Assert.AreEqual("E:Microsoft.Win32.SystemEvents.PowerModeChanged", symbol.IndexId);
 
-			symbol = new VBResolver().GetSymbolAt(fileName, textView.FindSpan("e = New Exception").End);
+			symbol = new VBResolver().GetSymbolAt(fileName, textView.FindSpan("ex = New Exception").End);
 			Assert.AreEqual("M:System.Exception.ctor", symbol.IndexId);
 
 			symbol = new VBResolver().GetSymbolAt(fileName, textView.FindSpan("0.ToString").End);
