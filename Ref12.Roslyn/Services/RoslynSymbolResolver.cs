@@ -3,11 +3,10 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.FindSymbols;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.Text;
-using SLaks.Ref12.Services;
 
 using MySymbolInfo = SLaks.Ref12.Services.SymbolInfo;
 
-namespace Ref12.Roslyn {
+namespace SLaks.Ref12.Services {
 	public class RoslynSymbolResolver : ISymbolResolver {
 		public MySymbolInfo GetSymbolAt(string sourceFileName, SnapshotPoint point) {
 			// Yes; this is evil and synchronously waits for async tasks.

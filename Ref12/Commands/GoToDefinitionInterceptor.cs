@@ -21,15 +21,21 @@ namespace SLaks.Ref12.Commands {
 
 			var dte = (DTE)sp.GetService(typeof(DTE));
 
-			resolvers.Add("Basic", new VBResolver());
-
 			// Dev12 (VS2013) has the new simpler native API
-			// Dev14 will hopefully have Roslyn
+			// Dev14, and Dev12 with Roslyn preview, will have Roslyn
 			// All other versions need ParseTreeNodes
-			if (dte.Version == "12.0")
-				resolvers.Add("CSharp", new CSharp12Resolver());
-			else
-				resolvers.Add("CSharp", new CSharp10Resolver(dte));
+			if (new Version(dte.Version).Major > 12
+			 || textView.BufferGraph.GetTextBuffers(tb => tb.ContentType.IsOfType("Roslyn Languages")).Any()) {
+				resolvers.Add("CSharp", new RoslynSymbolResolver());
+				resolvers.Add("Basic", new RoslynSymbolResolver());
+			} else {
+				resolvers.Add("Basic", new VBResolver());
+
+				if (dte.Version == "12.0")
+					resolvers.Add("CSharp", new CSharp12Resolver());
+				else
+					resolvers.Add("CSharp", new CSharp10Resolver(dte));
+			}
 		}
 
 		protected override bool Execute(VSConstants.VSStd97CmdID commandId, uint nCmdexecopt, IntPtr pvaIn, IntPtr pvaOut) {
@@ -53,7 +59,7 @@ namespace SLaks.Ref12.Commands {
 		}
 
 		protected override bool IsEnabled() {
-			return false;   // Always pass through to the native check
+			return false;	// Always pass through to the native check
 		}
 	}
 }

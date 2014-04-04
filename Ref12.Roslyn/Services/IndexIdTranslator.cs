@@ -2,7 +2,7 @@
 using System.Text;
 using Microsoft.CodeAnalysis;
 
-namespace Ref12.Roslyn {
+namespace SLaks.Ref12.Services {
 	class IndexIdTranslator {
 
 		// This is copy-pasted from Kirill's source to ensure correct hashes
