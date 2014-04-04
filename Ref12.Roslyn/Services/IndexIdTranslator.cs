@@ -1,6 +1,4 @@
-﻿using System.Security.Cryptography;
-using System.Text;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 
 namespace SLaks.Ref12.Services {
 	class IndexIdTranslator {
@@ -79,44 +77,9 @@ namespace SLaks.Ref12.Services {
 			return result;
 		}
 		public static string GetId(ISymbol symbol) {
-			string result = null;
-
-			if (symbol.Kind == SymbolKind.Parameter ||
-			symbol.Kind == SymbolKind.Local) {
-				string parent = GetDocumentationCommentId(symbol.ContainingSymbol);
-				result = parent + ":" + symbol.MetadataName;
-			} else {
-				result = GetDocumentationCommentId(symbol);
-			}
-
-			return GetId(result);
-		}
-		public static string GetId(string result) {
-			result = GetMD5Hash(result, 16);
-			return result;
-		}
-		public static string GetMD5Hash(string input, int digits) {
-			using (var md5 = MD5.Create()) {
-				var bytes = Encoding.UTF8.GetBytes(input);
-				var hashBytes = md5.ComputeHash(bytes);
-				return ByteArrayToHexString(hashBytes, digits);
-			}
-		}
-		public static string ByteArrayToHexString(byte[] bytes, int digits = 0) {
-			if (digits == 0) {
-				digits = bytes.Length * 2;
-			}
-
-			char[] c = new char[digits];
-			byte b;
-			for (int i = 0; i < digits / 2; i++) {
-				b = ((byte)(bytes[i] >> 4));
-				c[i * 2] = (char)(b > 9 ? b + 87 : b + 0x30);
-				b = ((byte)(bytes[i] & 0xF));
-				c[i * 2 + 1] = (char)(b > 9 ? b + 87 : b + 0x30);
-			}
-
-			return new string(c);
+			if (symbol.Kind == SymbolKind.Parameter || symbol.Kind == SymbolKind.Local)
+				symbol = symbol.ContainingSymbol;
+			return GetDocumentationCommentId(symbol);
 		}
 	}
 }
