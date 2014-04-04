@@ -19,6 +19,26 @@ namespace SLaks.Ref12.Services {
 			if (symbol == null || symbol.ContainingAssembly == null)
 				return null;
 
+			if (symbol.Kind == SymbolKind.Local)
+				return null;
+
+			// F12 on the declaration of a lambda parameter should jump to its type; all other parameters shouldn't be handled at all.
+			var param = symbol as IParameterSymbol;
+			if (param != null) {
+				var method = param.ContainingSymbol as IMethodSymbol;
+				if (method == null || method.MethodKind != MethodKind.LambdaMethod)
+					return null;
+				if (param.Locations.Length != 1)
+					return null;
+
+				if (param.Locations[0].IsInSource
+				 && !param.Locations[0].SourceSpan.Contains(point)
+				 && param.Locations[0].SourceSpan.End != point)		// Contains() is exclusive
+					return null;
+				else
+					symbol = param.Type;
+			}
+			symbol = IndexIdTranslator.GetTargetSymbol(symbol);
 
 			PortableExecutableReference reference = null;
 			Compilation comp;

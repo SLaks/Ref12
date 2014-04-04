@@ -5,6 +5,9 @@ namespace SLaks.Ref12.Services {
 
 		// This is copy-pasted from Kirill's source to ensure correct hashes
 		public static ISymbol GetTargetSymbol(ISymbol symbol) {
+			if (symbol.Kind == SymbolKind.Parameter || symbol.Kind == SymbolKind.Local)
+				symbol = symbol.ContainingSymbol;
+
 			if (IsThisParameter(symbol)) {
 				var paramType = ((IParameterSymbol)symbol).Type;
 				if (paramType != null)
@@ -77,8 +80,6 @@ namespace SLaks.Ref12.Services {
 			return result;
 		}
 		public static string GetId(ISymbol symbol) {
-			if (symbol.Kind == SymbolKind.Parameter || symbol.Kind == SymbolKind.Local)
-				symbol = symbol.ContainingSymbol;
 			return GetDocumentationCommentId(symbol);
 		}
 	}

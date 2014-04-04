@@ -25,6 +25,7 @@ namespace Ref12.Tests {
 		private static ITextView textView;
 		private static string fileName;
 
+		static bool isRoslyn;
 		static ISymbolResolver resolver;
 		[ClassInitialize]
 		public static void PrepareSolution(TestContext context) {
@@ -35,7 +36,8 @@ namespace Ref12.Tests {
 			DTE.ItemOperations.OpenFile(fileName).Activate();
 			textView = GetCurentTextView();
 
-			if (RoslynUtilities.IsRoslynInstalled(VsIdeTestHostContext.ServiceProvider))
+			isRoslyn = RoslynUtilities.IsRoslynInstalled(VsIdeTestHostContext.ServiceProvider);
+			if (isRoslyn)
 				resolver = new RoslynSymbolResolver();
 			else
 				resolver = new VBResolver();
@@ -66,15 +68,19 @@ namespace Ref12.Tests {
 
 			var symbol = resolver.GetSymbolAt(fileName, textView.FindSpan("<AttributeUsage").End);
 			Assert.AreEqual("mscorlib", symbol.AssemblyName);
-			Assert.AreEqual("T:System.AttributeUsageAttribute", symbol.IndexId);
-
+			if (isRoslyn)
+				Assert.AreEqual("M:System.AttributeUsageAttribute.ctor(System.AttributeTargets)", symbol.IndexId);
+			else
+				Assert.AreEqual("T:System.AttributeUsageAttribute", symbol.IndexId);
 			symbol = resolver.GetSymbolAt(fileName, textView.FindSpan("AttributeUsage(AttributeTargets.All").End);
 			Assert.AreEqual("mscorlib", symbol.AssemblyName);
 			Assert.AreEqual("F:System.AttributeTargets.All", symbol.IndexId);
 
-			// I can't find any way to resolve attribute properties to their symbols.
-			//symbol = resolver.GetSymbolAt(fileName, textView.FindSpan("AllowMultiple").End);
-			//Assert.AreEqual("P:System.AttributeUsageAttribute.AllowMultiple", symbol.IndexId);
+			// In native, I can't find any way to resolve attribute properties to their symbols.
+			if (isRoslyn) {
+				symbol = resolver.GetSymbolAt(fileName, textView.FindSpan("AllowMultiple").End);
+				Assert.AreEqual("P:System.AttributeUsageAttribute.AllowMultiple", symbol.IndexId);
+			}
 		}
 
 		[TestMethod]
@@ -117,11 +123,10 @@ namespace Ref12.Tests {
 			var symbol = resolver.GetSymbolAt(fileName, textView.FindSpan("e.Message + c").End);
 			Assert.IsNull(symbol, "Lambda parameters should not be resolved");
 
-			if (!RoslynUtilities.IsRoslynInstalled(VsIdeTestHostContext.ServiceProvider))
-				Assert.Inconclusive("VB cannot resolve inferred lambda parameter types?");
-
+			if (!isRoslyn)
+				Assert.Inconclusive("VB native cannot resolve inferred lambda parameter types?");
 			symbol = resolver.GetSymbolAt(fileName, textView.FindSpan("Sub(myLL").End);
-			Assert.AreEqual("mscorlib", symbol.AssemblyName);
+			Assert.AreEqual("System", symbol.AssemblyName);
 			Assert.AreEqual("T:System.Collections.Generic.LinkedList`1", symbol.IndexId, "Lambda parameter declarations should resolve to open generic types");
 
 			symbol = resolver.GetSymbolAt(fileName, textView.FindSpan("Function(e").End);
@@ -143,8 +148,11 @@ namespace Ref12.Tests {
 			symbol = resolver.GetSymbolAt(fileName, textView.FindSpan("o = New List").End);
 			Assert.AreEqual("M:System.Collections.Generic.List`1.ctor(System.Collections.Generic.IEnumerable{`0})", symbol.IndexId);
 
-			symbol = resolver.GetSymbolAt(fileName, textView.FindSpan("New System.Collections.Gene").End);
-			Assert.AreEqual("M:System.Collections.Generic.List`1.ctor(System.Collections.Generic.IEnumerable{`0})", symbol.IndexId);
+			if (!isRoslyn) {
+				symbol = resolver.GetSymbolAt(fileName, textView.FindSpan("New System.Collections.Gene").End);
+				Assert.AreEqual("M:System.Collections.Generic.List`1.ctor(System.Collections.Generic.IEnumerable{`0})", symbol.IndexId);
+			}
+
 			symbol = resolver.GetSymbolAt(fileName, textView.FindSpan("New System.Collections.Generic.List").End);
 			Assert.AreEqual("M:System.Collections.Generic.List`1.ctor(System.Collections.Generic.IEnumerable{`0})", symbol.IndexId);
 
