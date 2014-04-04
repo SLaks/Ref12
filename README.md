@@ -22,6 +22,8 @@ This extension uses undocumented APIs from the native C# language services to fi
 
 It uses MEF to import `IReferenceSourceProvider` instances that can navigate to members in specific assemblies; you can export implementations of this interface to add other external source providers.
 
+To allow classes to inherit types in unversioned assemblies, the native VB implementation is in a separate Ref12.Unversioned assembly, so that I can add my AssemblyResolve handler without MEF trying to load those types.
+
 **Pull requests welcome**
 
 ![F12 to .Net Reference Source](http://i1.visualstudiogallery.msdn.s-msft.com/f89b27c5-7d7b-4059-adde-7ccc709fa86e/image/file/125181/1/ref12%20screenshot.png)
