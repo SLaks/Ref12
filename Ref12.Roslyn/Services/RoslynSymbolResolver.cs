@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.FindSymbols;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.Text;
@@ -14,17 +13,22 @@ namespace SLaks.Ref12.Services {
 			// does; apparently a VS command handler can't be truly async
 			// (Roslyn does use IWaitIndicator, which I can't).
 
-
-			var doc = point.Snapshot.GetRelatedDocumentsWithChanges().FirstOrDefault();
+			var doc = point.Snapshot.GetOpenDocumentInCurrentContextWithChanges();
 			var model = doc.GetSemanticModelAsync().Result;
 			var symbol = SymbolFinder.FindSymbolAtPosition(model, point, doc.Project.Solution.Workspace);
 			if (symbol == null || symbol.ContainingAssembly == null)
 				return null;
 
+
+			PortableExecutableReference reference = null;
+			Compilation comp;
+			if (doc.Project.TryGetCompilation(out comp))
+				reference = comp.GetMetadataReference(symbol.ContainingAssembly) as PortableExecutableReference;
+
 			return new MySymbolInfo(
 				IndexIdTranslator.GetId(symbol),
 				isLocal: doc.Project.Solution.Workspace.Kind != WorkspaceKind.MetadataAsSource && doc.Project.Solution.GetProject(symbol.ContainingAssembly) != null,
-				assemblyPath: null,	// Cannot determine?
+				assemblyPath: reference == null ? null : reference.FullPath,
 				assemblyName: symbol.ContainingAssembly.Identity.Name
 			);
 		}
