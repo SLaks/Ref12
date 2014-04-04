@@ -64,11 +64,16 @@ namespace SLaks.Ref12.Services {
 						assemblyList = await http.GetStringAsync(url + "/assemblies.txt");
 					// Format:
 					// AssemblyName; ProjectIndex; DependentAssemblies
-					baseUrl = url;
-					AvailableAssemblies = new HashSet<string>(
+					var assemblies = new HashSet<string>(
 						assemblyList.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)
 									.Select(s => s.Remove(s.IndexOf(';')))
 					);
+
+					// If nothing changed, don't spam the log
+					if (assemblies.SetEquals(this.AvailableAssemblies) && url == this.baseUrl)
+						return;
+					AvailableAssemblies = assemblies;
+					baseUrl = url;
 					logger.Log("Using reference source from " + url + " with " + AvailableAssemblies.Count + " assemblies");
 					return;
 				} catch (Exception ex) {
