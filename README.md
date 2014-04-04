@@ -24,6 +24,8 @@ It uses MEF to import `IReferenceSourceProvider` instances that can navigate to 
 
 To allow classes to inherit types in unversioned assemblies, the native VB implementation is in a separate Ref12.Unversioned assembly, so that I can add my AssemblyResolve handler without MEF trying to load those types.
 
+Because Roslyn references newer versions of the VS editor assemblies, the Roslyn `ISymbolResolver` implementation lives in a separate assembly, to avoid compiler version conflicts.  This assembly is loaded at runtime if Roslyn us detected.  This also includes a Roslyn DLL file which is not (yet?) available on NuGet, but which is required to get a `Document` from a TextBuffer.
+
 **Pull requests welcome**
 
 ![F12 to .Net Reference Source](http://i1.visualstudiogallery.msdn.s-msft.com/f89b27c5-7d7b-4059-adde-7ccc709fa86e/image/file/125181/1/ref12%20screenshot.png)
