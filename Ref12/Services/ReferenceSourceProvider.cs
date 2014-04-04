@@ -17,15 +17,27 @@ namespace SLaks.Ref12.Services {
 		void Navigate(SymbolInfo symbol);
 	}
 	[Export(typeof(IReferenceSourceProvider))]
+	public class RoslynReferenceSourceProvider : ReferenceSourceProvider {
+		[ImportingConstructor]
+		public RoslynReferenceSourceProvider(ILogger logger) : base(logger, "http://index", "http://source.roslyn.codeplex.com") {
+		}
+	}
+	[Export(typeof(IReferenceSourceProvider))]
+	public class DotNetReferenceSourceProvider : ReferenceSourceProvider {
+		[ImportingConstructor]
+		public DotNetReferenceSourceProvider(ILogger logger) : base(logger, "http://index", "http://referencesource.microsoft.com") {
+		}
+	}
+
 	public class ReferenceSourceProvider : IReferenceSourceProvider, IDisposable {
-		static readonly string[] urls = { "http://index", "http://referencesource.microsoft.com", "http://referencesource-beta.microsoft.com" };
+		IEnumerable<string> urls;
 
 		readonly ILogger logger;
 		readonly Timer timer;
 
-		[ImportingConstructor]
-		public ReferenceSourceProvider(ILogger logger) {
+		public ReferenceSourceProvider(ILogger logger, params string[] urls) {
 			this.logger = logger;
+			this.urls = urls;
 			timer = new Timer(async _ => await LookupService(), null, 0, (int)TimeSpan.FromMinutes(60).TotalMilliseconds);
 			AvailableAssemblies = new HashSet<string>();
 
