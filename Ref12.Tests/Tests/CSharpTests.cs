@@ -14,6 +14,7 @@ using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.TextManager.Interop;
 using Microsoft.VSSDK.Tools.VsIdeTesting;
+using SLaks.Ref12;
 using SLaks.Ref12.Services;
 
 namespace Ref12.Tests {
@@ -97,11 +98,17 @@ namespace Ref12.Tests {
 			var docService = componentModel.GetService<ITextDocumentFactoryService>();
 			ITextDocument document;
 			Assert.IsTrue(docService.TryGetTextDocument(metadataTextView.TextDataModel.DocumentBuffer, out document));
-			var symbol = new CSharp10Resolver(DTE).GetSymbolAt(document.FilePath, metadataTextView.FindSpan("public LogStore(SafeFileHandle").End);
-			Assert.IsNull(symbol);	// CSharp10Resolver cannot get a Compilation for metadata as source, but must not crash.
-
-			if (DTE.Version == "12.0") {
-				symbol = new CSharp12Resolver().GetSymbolAt(document.FilePath, metadataTextView.FindSpan("public LogStore(SafeFileHandle").End);
+			if (!RoslynUtilities.IsRoslynInstalled(VsIdeTestHostContext.ServiceProvider)) {
+				var symbol = new CSharp10Resolver(DTE).GetSymbolAt(document.FilePath, metadataTextView.FindSpan("public LogStore(SafeFileHandle").End);
+				Assert.IsNull(symbol);	// CSharp10Resolver cannot get a Compilation for metadata as source, but must not crash.
+			}
+			ISymbolResolver resolver = null;
+			if (RoslynUtilities.IsRoslynInstalled(VsIdeTestHostContext.ServiceProvider))
+				resolver = new RoslynSymbolResolver();
+			else if (DTE.Version == "12.0")
+				resolver = new CSharp12Resolver();
+			if (resolver == null) {
+				var symbol = resolver.GetSymbolAt(document.FilePath, metadataTextView.FindSpan("public LogStore(SafeFileHandle").End);
 				Assert.IsFalse(symbol.HasLocalSource);
 				Assert.AreEqual("mscorlib", symbol.AssemblyName);
 				Assert.AreEqual("T:Microsoft.Win32.SafeHandles.SafeFileHandle", symbol.IndexId);
@@ -109,13 +116,26 @@ namespace Ref12.Tests {
 		}
 
 		[TestMethod]
+		public async Task CSharpRoslynResolverTest() {
+			if (!RoslynUtilities.IsRoslynInstalled(VsIdeTestHostContext.ServiceProvider))
+				Assert.Inconclusive("Roslyn is not installed");
+
+			await TestCSharpResolver(new RoslynSymbolResolver());
+		}
+
+		[TestMethod]
 		public async Task CSharp10ResolverTest() {
+			if (RoslynUtilities.IsRoslynInstalled(VsIdeTestHostContext.ServiceProvider))
+				Assert.Inconclusive("Cannot test native language services with Roslyn installed?");
+
 			await TestCSharpResolver(new CSharp10Resolver(DTE));
 		}
 		[TestMethod]
 		public async Task CSharp12ResolverTest() {
 			if (DTE.Version != "12.0")
 				Assert.Inconclusive("CSharp12Resolver only works in VS 2013");
+			if (RoslynUtilities.IsRoslynInstalled(VsIdeTestHostContext.ServiceProvider))
+				Assert.Inconclusive("Cannot test native language services with Roslyn installed?");
 
 			await TestCSharpResolver(new CSharp10Resolver(DTE));
 		}

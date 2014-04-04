@@ -3,7 +3,7 @@ using Microsoft.VisualStudio.Shell.Interop;
 
 namespace SLaks.Ref12 {
 	// Stolen from Microsoft.RestrictedUsage.CSharp.Utilities in Microsoft.VisualStudio.CSharp.Services.Language.dll
-	static class RoslynUtilities {
+	public static class RoslynUtilities {
 		private static bool? roslynInstalled;
 		public static bool IsRoslynInstalled(IServiceProvider serviceProvider) {
 			if (roslynInstalled.HasValue)

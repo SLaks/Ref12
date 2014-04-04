@@ -80,6 +80,10 @@
     <Compile Include="Tests\CSharpTests.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Ref12.Roslyn\Ref12.Roslyn.csproj">
+      <Project>{97207070-034e-4d35-a0b6-45326a5a4249}</Project>
+      <Name>Ref12.Roslyn</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Ref12.Unversioned\Ref12.Unversioned.csproj">
       <Project>{6677656D-FC7E-4C05-BA25-510019A9E73D}</Project>
       <Name>Ref12.Unversioned</Name>
