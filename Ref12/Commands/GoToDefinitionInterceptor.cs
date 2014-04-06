@@ -26,8 +26,8 @@ namespace SLaks.Ref12.Commands {
 			// All other versions need ParseTreeNodes
 			if (new Version(dte.Version).Major > 12
 			 || textView.BufferGraph.GetTextBuffers(tb => tb.ContentType.IsOfType("Roslyn Languages")).Any()) {
-				resolvers.Add("CSharp", new RoslynSymbolResolver());
-				resolvers.Add("Basic", new RoslynSymbolResolver());
+				resolvers.Add("CSharp", CreateRoslynResolver());
+				resolvers.Add("Basic", CreateRoslynResolver());
 			} else {
 				resolvers.Add("Basic", new VBResolver());
 
@@ -37,6 +37,8 @@ namespace SLaks.Ref12.Commands {
 					resolvers.Add("CSharp", new CSharp10Resolver(dte));
 			}
 		}
+		// This reference cannot be JITted in VS2012, so I need to wrap it in a separate method.
+		static ISymbolResolver CreateRoslynResolver() { return new RoslynSymbolResolver(); }
 
 		protected override bool Execute(VSConstants.VSStd97CmdID commandId, uint nCmdexecopt, IntPtr pvaIn, IntPtr pvaOut) {
 			ISymbolResolver resolver = null;
