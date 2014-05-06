@@ -61,6 +61,9 @@ namespace SLaks.Ref12.Services {
 				if (param != method.Parameters.First())
 					sb.Append(',');
 				converter.AppendClrName(param.Type);
+
+				if (param is RQOutParameter || param is RQRefParameter)
+					sb.Append('@');
 			}
 			sb.Append(')');
 		}

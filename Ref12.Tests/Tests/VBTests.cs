@@ -109,6 +109,9 @@ namespace Ref12.Tests {
 			symbol = resolver.GetSymbolAt(fileName, textView.FindSpan("0.ToString").End);
 			Assert.AreEqual("M:System.Int32.ToString", symbol.IndexId);
 
+			symbol = resolver.GetSymbolAt(fileName, textView.FindSpan("\tInterlocked.Add").End);
+			Assert.AreEqual("M:System.Threading.Interlocked.Add(System.Int32@,System.Int32)", symbol.IndexId);
+
 			// TODO: Wait for the reference source to support operators.
 			//symbol = resolver.GetSymbolAt(fileName, textView.FindSpan("ns +").End);
 			//Assert.AreEqual("M:System.Xml.Linq.XNamespace.op_Addition(System.Xml.Linq.XNamespace,System.String)", symbol.IndexId);

@@ -152,6 +152,12 @@ namespace Ref12.Tests {
 			Assert.IsTrue(symbol.HasLocalSource);
 			Assert.AreEqual("M:CSharp.File.A`1.B`1.M``1(`0,`1,`0,``0)", symbol.IndexId);
 
+			symbol = resolver.GetSymbolAt(fileName, textView.FindSpan("\tInterlocked.Add").End);
+			Assert.AreEqual("M:System.Threading.Interlocked.Add(System.Int32@,System.Int32)", symbol.IndexId);
+
+			symbol = resolver.GetSymbolAt(fileName, textView.FindSpan("int.TryParse").End);
+			Assert.AreEqual("M:System.Int32.TryParse(System.String,System.Int32@)", symbol.IndexId);
+
 			symbol = resolver.GetSymbolAt(fileName, textView.FindSpan("e.Message + c").End);
 			Assert.IsNull(symbol);		// Don't crash on lambda parameters
 		}

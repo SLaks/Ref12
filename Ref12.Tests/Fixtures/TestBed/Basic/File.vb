@@ -1,6 +1,7 @@
 ﻿Imports System.Collections.Generic
 Imports System.Collections.ObjectModel
 Imports System.Linq
+Imports System.Threading
 Imports System.Xml.Linq
 
 <AttributeUsage(AttributeTargets.All, AllowMultiple:=True)>
@@ -52,6 +53,9 @@ Public Class File
 		Dim ns As XNamespace = "http://slaks.net"
 		'M:System.Xml.Linq.XNamespace.op_Addition(System.Xml.Linq.XNamespace,System.String)
 		Dim n = ns + "a"
+
+		'M:System.Threading.Interlocked.Add(System.Int32@,System.Int32)
+		Interlocked.Add(3, 4)
 	End Sub
 	Class A(Of T, W)
 		Class B(Of U, X)
