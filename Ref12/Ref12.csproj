@@ -30,7 +30,6 @@
     <AssemblyName>Ref12</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <GeneratePkgDefFile>false</GeneratePkgDefFile>
     <ReferencePath>$(ReferencePath);$(MSBuildThisFileDirectory)..\References\v10.0</ReferencePath>
     <StartAction>Program</StartAction>
     <StartProgram>$(DevEnvDir)\devenv.exe</StartProgram>
@@ -100,10 +99,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands\CommandTargetBase.cs" />
+    <Compile Include="Commands\GoToDefintionNativeCommand.cs" />
     <Compile Include="Commands\GoToDefinitionInterceptor.cs" />
     <Compile Include="Commands\TextViewListener.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Ref12Package.cs" />
     <Compile Include="RoslynUtilities.cs" />
     <Compile Include="Services\ILogger.cs" />
     <Compile Include="Services\CSharp12Resolver.cs" />
@@ -119,6 +120,13 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <VSCTCompile Include="Ref12.vsct">
+      <ResourceName>Menus.ctmenu</ResourceName>
+    </VSCTCompile>
+    <EmbeddedResource Include="VSPackage.resx">
+      <MergeWithCTO>true</MergeWithCTO>
+      <ManifestResourceName>VSPackage</ManifestResourceName>
+    </EmbeddedResource>
     <Content Include="Resources\Ref12-200.png">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
