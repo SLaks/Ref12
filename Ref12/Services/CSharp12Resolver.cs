@@ -12,7 +12,7 @@ namespace SLaks.Ref12.Services {
 
 		public SymbolInfo GetSymbolAt(string sourceFileName, SnapshotPoint point) {
 			var result = GetGoToDefLocations(sourceFileName, point).FirstOrDefault();
-			if (result == null)
+			if (result == null || String.IsNullOrEmpty(result.RQName))
 				return null;
 			return new SymbolInfo(RQNameTranslator.ToIndexId(result.RQName), !result.IsMetadata, result.AssemblyBinaryName);
 		}

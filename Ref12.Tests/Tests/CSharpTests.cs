@@ -137,7 +137,7 @@ namespace Ref12.Tests {
 			if (RoslynUtilities.IsRoslynInstalled(VsIdeTestHostContext.ServiceProvider))
 				Assert.Inconclusive("Cannot test native language services with Roslyn installed?");
 
-			await TestCSharpResolver(new CSharp10Resolver(DTE));
+			await TestCSharpResolver(new CSharp12Resolver());
 		}
 		private async Task TestCSharpResolver(ISymbolResolver resolver) {
 			// Hop on to the UI thread so the language service APIs work
@@ -148,7 +148,7 @@ namespace Ref12.Tests {
 			Assert.AreEqual("System.Core", symbol.AssemblyName);
 			Assert.AreEqual("M:System.Linq.Enumerable.Aggregate``2(System.Collections.Generic.IEnumerable{``0},``1,System.Func{``1,``0,``1})", symbol.IndexId);
 
-			symbol = resolver.GetSymbolAt(fileName, textView.FindSpan("void M<").End - 1);
+			symbol = resolver.GetSymbolAt(fileName, textView.FindSpan("M(").End - 1);
 			Assert.IsTrue(symbol.HasLocalSource);
 			Assert.AreEqual("M:CSharp.File.A`1.B`1.M``1(`0,`1,`0,``0)", symbol.IndexId);
 
@@ -160,6 +160,9 @@ namespace Ref12.Tests {
 
 			symbol = resolver.GetSymbolAt(fileName, textView.FindSpan("e.Message + c").End);
 			Assert.IsNull(symbol);		// Don't crash on lambda parameters
+
+			symbol = resolver.GetSymbolAt(fileName, textView.FindSpan("ref y").End);
+			Assert.IsNull(symbol);		// Don't crash on locals
 		}
 
 		///<summary>Gets the TextView for the active document.</summary>

@@ -14,14 +14,16 @@ namespace CSharp {
 
 			int y;
 			// M:System.Int32.TryParse(System.String,System.Int32@)
-			int.TryParse("a", out Y);
+			int.TryParse("a", out y);
 			// M:System.Threading.Interlocked.Add(System.Int32@,System.Int32)
 			Interlocked.Add(ref y, 2);
 		}
 		class A<T> {
 			class B<U> {
 				// M:CSharp.File.A`1.B`1.M``1(`0,`1,`0,``0)
-				void M<V>(T x, U a, T b, V c) { }
+				void M<V>(T x, U a, T b, V c) {
+					M(x, a, b, c);
+				}
 			}
 		}
 	}
