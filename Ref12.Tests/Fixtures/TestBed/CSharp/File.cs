@@ -12,12 +12,19 @@ namespace CSharp {
 			"".Aggregate(new Exception(), (e, c) => new Exception(e.Message + c));
 			System.IO.Log.LogStore x;
 
+			// M:System.String.Join(System.String,System.String[])
+			string.Join(null, null);
+
 			int y;
 			// M:System.Int32.TryParse(System.String,System.Int32@)
 			int.TryParse("a", out y);
 			// M:System.Threading.Interlocked.Add(System.Int32@,System.Int32)
 			Interlocked.Add(ref y, 2);
 		}
+
+		// M:CSharp.File.Arrr(System.Int32[0:,0:,0:][])
+		void Arrr(int[][,,] x) { Arrr(null); }
+
 		class A<T> {
 			class B<U> {
 				// M:CSharp.File.A`1.B`1.M``1(`0,`1,`0,``0)

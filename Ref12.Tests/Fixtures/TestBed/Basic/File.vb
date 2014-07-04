@@ -31,6 +31,9 @@ Public Class File
 		'T:System.Collections.Generic.LinkedList`1
 		Dim f As Action(Of LinkedList(Of Integer)) = Sub(myLL) myLL.Clear()
 
+		'M:System.String.Join(System.String,System.String[])
+		String.Join(Nothing, Nothing)
+
 		'M:System.Exception.ctor
 		Dim ex = New Exception
 
@@ -57,6 +60,10 @@ Public Class File
 		'M:System.Threading.Interlocked.Add(System.Int32@,System.Int32)
 		Interlocked.Add(3, 4)
 	End Sub
+
+	Sub Arrr(x As Integer()(,,))
+	End Sub
+
 	Class A(Of T, W)
 		Class B(Of U, X)
 			'M:Basic.File.A`2.B`2.M``1(`2,`0,``0)

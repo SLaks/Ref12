@@ -215,6 +215,10 @@ namespace SLaks.Ref12.Services {
 			}
 			protected override void VisitArray(VBType node) {
 				VisitIfNotNull(node.ElementType);
+				if (node.Rank == 1) {
+					Code.Append("[]");
+					return;
+				}
 				Code.Append("[");
 				for (int i = 0; i < node.Rank; i++) {
 					if (i > 0)

@@ -32,14 +32,14 @@ namespace SLaks.Ref12.Services {
 		}
 		static string ToIndexId(RQMember member) {
 			var sb = new StringBuilder();
-			if (member is RQMemberVariable) // RQKeyword for fields is Membvar
+			if (member is RQMemberVariable)	// RQKeyword for fields is Membvar
 				sb.Append("F:");
 			else
 				sb.Append(Methods.RQKeyword(member)[0]).Append(':');
 
 			sb.Append(member.ContainingType.ClrName());
 			sb.Append('.');
-			sb.Append(member.MemberName.TrimStart('.'));    // Don't add a second dot from ".ctor"
+			sb.Append(member.MemberName.TrimStart('.'));	// Don't add a second dot from ".ctor"
 
 			var method = member as RQMethodOrProperty;
 			if (method == null)
@@ -109,11 +109,15 @@ namespace SLaks.Ref12.Services {
 
 			private void Append(RQArrayType t) {
 				AppendClrName(t.ElementType);
+				if (t.Rank == 1) {
+					sb.Append("[]");
+					return;
+				}
 				sb.Append('[');
 				for (int i = 0; i < t.Rank; i++) {
 					if (i > 0)
 						sb.Append(',');
-					sb.Append("0:");    // RQNames can only represent SZArrays
+					sb.Append("0:");	// RQNames can only represent SZArrays
 				}
 				sb.Append(']');
 			}

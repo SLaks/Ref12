@@ -154,7 +154,13 @@ namespace Ref12.Tests {
 
 			symbol = resolver.GetSymbolAt(fileName, textView.FindSpan("\tInterlocked.Add").End);
 			Assert.AreEqual("M:System.Threading.Interlocked.Add(System.Int32@,System.Int32)", symbol.IndexId);
+			
+			symbol = resolver.GetSymbolAt(fileName, textView.FindSpan("\tstring.Join").End);
+			Assert.AreEqual("M:System.String.Join(System.String,System.String[])", symbol.IndexId);
 
+			symbol = resolver.GetSymbolAt(fileName, textView.FindSpan("{ Arrr").End);
+			Assert.AreEqual("M:CSharp.File.Arrr(System.Int32[0:,0:,0:][])", symbol.IndexId);
+			
 			symbol = resolver.GetSymbolAt(fileName, textView.FindSpan("int.TryParse").End);
 			Assert.AreEqual("M:System.Int32.TryParse(System.String,System.Int32@)", symbol.IndexId);
 
