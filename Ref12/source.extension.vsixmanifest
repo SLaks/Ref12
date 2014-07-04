@@ -3,7 +3,7 @@
 	<Identifier Id="SLaks-Ref12-086C4CE4-7061-4B1F-BC77-B64E4ED71B8E">
 		<Name>Ref12</Name>
 		<Author>SLaks</Author>
-		<Version>3.1</Version>
+		<Version>3.2</Version>
 		<Description xml:space="preserve">Forwards F12 to ReferenceSource.Microsoft.com instead of showing metadata.</Description>
 		<Icon>Resources\Ref12-32.png</Icon>
 		<PreviewImage>Resources\Ref12-200.png</PreviewImage>
