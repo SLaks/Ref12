@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CommandTable xmlns="http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <Extern href="stdidcmd.h"/>
+  <Extern href="vsshlids.h"/>
+  <Commands package="PackageGuid">
+    <Buttons>
+      <Button guid="CommandsGuid" id="GoToNativeDefinition" priority="0x0101" type="Button">
+        <Parent guid="guidSHLMainMenu" id="IDG_VS_CODEWIN_NAVIGATETOLOCATION"/>
+        <Icon guid="guidObjectBrowserButtons" id="15"/>
+
+        <Strings>
+          <ButtonText>Go To Definition - &amp;Native</ButtonText>
+        </Strings>
+      </Button>
+    </Buttons>
+  </Commands>
+
+  <Symbols>
+    <GuidSymbol name="PackageGuid" value="{7E85FEAF-1785-4BE8-8E0C-0B4C55A97851}" />
+
+    <GuidSymbol name="CommandsGuid" value="{BD27207E-0A63-4C87-A111-D226F1C22EE3}">
+      <IDSymbol name="GoToNativeDefinition" value="0" />
+    </GuidSymbol>
+  </Symbols>
+</CommandTable>
