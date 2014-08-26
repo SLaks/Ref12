@@ -99,6 +99,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands\CommandTargetBase.cs" />
+    <Compile Include="Commands\GoToDefintionNativeCommand.cs" />
     <Compile Include="Commands\GoToDefinitionInterceptor.cs" />
     <Compile Include="Commands\TextViewListener.cs" />
     <Compile Include="Extensions.cs" />

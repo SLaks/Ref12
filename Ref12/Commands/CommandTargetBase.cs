@@ -13,6 +13,7 @@ namespace SLaks.Ref12.Commands {
 
 		public Guid CommandGroup { get; set; }
 		public ReadOnlyCollection<uint> CommandIds { get; private set; }
+		protected IOleCommandTarget NextTarget { get { return nextCommandTarget; } }
 
 		public CommandTargetBase(IVsTextView adapter, ITextView textView, params TCommandEnum[] commandIds) : this(adapter, textView, typeof(TCommandEnum).GUID, Array.ConvertAll(commandIds, e => Convert.ToUInt32(e))) { }
 		public CommandTargetBase(IVsTextView adapter, ITextView textView, Guid commandGroup, params uint[] commandIds) {
@@ -41,7 +42,7 @@ namespace SLaks.Ref12.Commands {
 			return nextCommandTarget.Exec(ref pguidCmdGroup, nCmdID, nCmdexecopt, pvaIn, pvaOut);
 		}
 
-		public int QueryStatus(ref Guid pguidCmdGroup, uint cCmds, OLECMD[] prgCmds, IntPtr pCmdText) {
+		public virtual int QueryStatus(ref Guid pguidCmdGroup, uint cCmds, OLECMD[] prgCmds, IntPtr pCmdText) {
 			if (pguidCmdGroup != CommandGroup)
 				return nextCommandTarget.QueryStatus(ref pguidCmdGroup, cCmds, prgCmds, pCmdText);
 

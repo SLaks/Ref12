@@ -41,6 +41,10 @@ namespace SLaks.Ref12.Commands {
 			if (!TextDocumentFactoryService.TryGetTextDocument(textView.TextDataModel.DocumentBuffer, out document))
 				return;
 
+			// Register the native command first, so that it ends up earlier in
+			// the command chain than our interceptor. This prevents the native
+			// comand from being intercepted too.
+			textView.Properties.GetOrCreateSingletonProperty(() => new GoToDefintionNativeCommand(textViewAdapter, textView));
 			textView.Properties.GetOrCreateSingletonProperty(() => new GoToDefinitionInterceptor(ReferenceProviders, ServiceProvider, textViewAdapter, textView, document));
 		}
 		public void SubjectBuffersDisconnected(IWpfTextView textView, ConnectionReason reason, Collection<ITextBuffer> subjectBuffers) {

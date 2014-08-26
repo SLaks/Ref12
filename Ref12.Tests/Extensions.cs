@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Globalization;
 using System.Windows.Threading;
-using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.TextManager.Interop;
+using SLaks.Ref12;
 
 namespace Ref12.Tests {
 	static class Extensions {
@@ -17,13 +16,8 @@ namespace Ref12.Tests {
 				throw new ArgumentException("String " + search + " occurs multiple times.  Please use a unique string");
 			return new SnapshotSpan(textView.TextBuffer.CurrentSnapshot, startIndex, search.Length);
 		}
-
-		public static void Execute(this IVsTextView textView, Enum commandId, IntPtr inHandle = default(IntPtr), IntPtr outHandle = default(IntPtr)) {
-			Execute((IOleCommandTarget)textView, commandId, inHandle, outHandle);
-		}
-		public static void Execute(this IOleCommandTarget target, Enum commandId, IntPtr inHandle = default(IntPtr), IntPtr outHandle = default(IntPtr)) {
-			var c = commandId.GetType().GUID;
-			ErrorHandler.ThrowOnFailure(target.Exec(ref c, Convert.ToUInt32(commandId, CultureInfo.InvariantCulture), 0, inHandle, outHandle));
+		public static void Execute(this IVsTextView textView, Enum commandId, uint execOptions = 0, IntPtr inHandle = default(IntPtr), IntPtr outHandle = default(IntPtr)) {
+			((IOleCommandTarget)textView).Execute(commandId, execOptions, inHandle, outHandle);
 		}
 
 
