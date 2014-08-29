@@ -26,6 +26,7 @@ namespace SLaks.Ref12.Commands {
 			// All other versions need ParseTreeNodes
 			if (new Version(dte.Version).Major > 12
 			 || textView.BufferGraph.GetTextBuffers(tb => tb.ContentType.IsOfType("Roslyn Languages")).Any()) {
+				RoslynAssemblyRedirector.Register();
 				resolvers.Add("CSharp", CreateRoslynResolver());
 				resolvers.Add("Basic", CreateRoslynResolver());
 			} else {
