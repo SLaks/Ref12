@@ -74,7 +74,8 @@ namespace SLaks.Ref12.Services {
 			}
 
 			result = symbol.GetDocumentationCommentId();
-
+			if (result == null)		// goto labels have no doc comment ID
+				return null;
 			result = result.Replace("#ctor", "ctor");
 
 			return result;
