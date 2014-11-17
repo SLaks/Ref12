@@ -30,6 +30,8 @@ namespace SLaks.Ref12 {
 				return null;
 
 			var name = new AssemblyName(args.Name);
+			if (name.Version == roslynVersion)
+				return null;
 			name.SetPublicKeyToken(publicKeyToken);
 			name.Version = roslynVersion;
 			Debug.WriteLine("Ref12: Redirecting load of " + args.Name + ",\tfrom " + (args.RequestingAssembly == null ? "(unknown)" : args.RequestingAssembly.FullName));
