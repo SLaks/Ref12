@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel.Composition;
-using System.ComponentModel.Composition.Hosting;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
@@ -15,6 +13,7 @@ using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.TextManager.Interop;
 using Microsoft.VSSDK.Tools.VsIdeTesting;
 using SLaks.Ref12;
+using SLaks.Ref12.Commands;
 using SLaks.Ref12.Services;
 
 namespace Ref12.Tests {
@@ -25,7 +24,6 @@ namespace Ref12.Tests {
 		// Hosted tests run out of a TestResults directory in the solution path.
 		static readonly string SolutionDir = Path.Combine(Path.GetDirectoryName(typeof(IntegrationTests).Assembly.Location), @"..\..\..\Ref12.Tests\Fixtures\TestBed");
 
-		[Export(typeof(IReferenceSourceProvider))]
 		class RecordingSourceProvider : IReferenceSourceProvider {
 			public RecordingSourceProvider() { AvailableAssemblies = new HashSet<string> { "mscorlib" }; }
 			public ISet<string> AvailableAssemblies { get; private set; }
@@ -48,11 +46,10 @@ namespace Ref12.Tests {
 
 		[ClassInitialize]
 		public static void PrepareSolution(TestContext context) {
-			DTE.Solution.Open(Path.Combine(SolutionDir, "TestBed.sln"));
-
-			var part = AttributedModelServices.CreatePart(sourceRecord);
 			componentModel = (IComponentModel)VsIdeTestHostContext.ServiceProvider.GetService(typeof(SComponentModel));
-			((CompositionContainer)componentModel.DefaultCompositionService).Compose(new CompositionBatch(new[] { part }, null));
+			componentModel.GetService<TextViewListener>().ReferenceProviders = new[] { sourceRecord };
+
+			DTE.Solution.Open(Path.Combine(SolutionDir, "TestBed.sln"));
 
 			fileName = Path.GetFullPath(Path.Combine(SolutionDir, "CSharp", "File.cs"));
 			DTE.ItemOperations.OpenFile(fileName).Activate();
@@ -154,13 +151,13 @@ namespace Ref12.Tests {
 
 			symbol = resolver.GetSymbolAt(fileName, textView.FindSpan("\tInterlocked.Add").End);
 			Assert.AreEqual("M:System.Threading.Interlocked.Add(System.Int32@,System.Int32)", symbol.IndexId);
-			
+
 			symbol = resolver.GetSymbolAt(fileName, textView.FindSpan("\tstring.Join").End);
 			Assert.AreEqual("M:System.String.Join(System.String,System.String[])", symbol.IndexId);
 
 			symbol = resolver.GetSymbolAt(fileName, textView.FindSpan("{ Arrr").End);
 			Assert.AreEqual("M:CSharp.File.Arrr(System.Int32[0:,0:,0:][])", symbol.IndexId);
-			
+
 			symbol = resolver.GetSymbolAt(fileName, textView.FindSpan("int.TryParse").End);
 			Assert.AreEqual("M:System.Int32.TryParse(System.String,System.Int32@)", symbol.IndexId);
 

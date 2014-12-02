@@ -12,6 +12,7 @@ using SLaks.Ref12.Services;
 
 namespace SLaks.Ref12.Commands {
 	[Export(typeof(IWpfTextViewConnectionListener))]
+	[Export(typeof(TextViewListener))]		// To let unit tests modify the instance
 	[ContentType("Basic")]
 	[ContentType("CSharp")]
 	[TextViewRole(PredefinedTextViewRoles.Document)]
@@ -19,7 +20,7 @@ namespace SLaks.Ref12.Commands {
 		[Import]
 		public SVsServiceProvider ServiceProvider { get; set; }
 
-		[ImportMany(AllowRecomposition = true)] // For unit tests
+		[ImportMany]
 		public IEnumerable<IReferenceSourceProvider> ReferenceProviders { get; set; }
 
 		[Import]
