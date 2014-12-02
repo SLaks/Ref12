@@ -19,7 +19,7 @@ namespace SLaks.Ref12.Services {
 			if (symbol == null || symbol.ContainingAssembly == null)
 				return null;
 
-			if (symbol.Kind == SymbolKind.Local)
+			if (symbol.Kind == SymbolKind.Local || symbol.Kind == SymbolKind.Namespace)
 				return null;
 
 			// F12 on the declaration of a lambda parameter should jump to its type; all other parameters shouldn't be handled at all.

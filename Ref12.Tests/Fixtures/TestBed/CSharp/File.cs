@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using Microsoft.Win32;

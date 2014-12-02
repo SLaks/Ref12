@@ -30,7 +30,7 @@ namespace SLaks.Ref12.Services {
 		public SymbolInfo GetSymbolAt(string sourceFileName, SnapshotPoint point) {
 			var project = dte.Solution.FindProjectItem(sourceFileName).ContainingProject;
 			var result = GetNode(point, project, sourceFileName);
-			if (result == null || String.IsNullOrEmpty(result.RQName))
+			if (result == null || String.IsNullOrEmpty(result.RQName) || result.RQName.StartsWith("Ns("))
 				return null;
 			return new SymbolInfo(RQNameTranslator.ToIndexId(result.RQName), result.DefinitionFiles.Any(), result.AssemblyName);
 		}

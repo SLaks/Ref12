@@ -161,6 +161,9 @@ namespace Ref12.Tests {
 			symbol = resolver.GetSymbolAt(fileName, textView.FindSpan("int.TryParse").End);
 			Assert.AreEqual("M:System.Int32.TryParse(System.String,System.Int32@)", symbol.IndexId);
 
+			symbol = resolver.GetSymbolAt(fileName, textView.FindSpan("System.Globalization").End);
+			Assert.IsNull(symbol);		// Ignore namespaces
+
 			symbol = resolver.GetSymbolAt(fileName, textView.FindSpan("e.Message + c").End);
 			Assert.IsNull(symbol);		// Don't crash on lambda parameters
 
