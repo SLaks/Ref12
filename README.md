@@ -30,3 +30,5 @@ Because Roslyn references newer versions of the VS editor assemblies, the Roslyn
 
 ![F12 to .Net Reference Source](http://i1.visualstudiogallery.msdn.s-msft.com/f89b27c5-7d7b-4059-adde-7ccc709fa86e/image/file/125181/1/ref12%20screenshot.png)
 
+#License
+[MIT](http://opensource.org/licenses/MIT)
