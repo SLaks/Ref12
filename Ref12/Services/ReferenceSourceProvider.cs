@@ -66,6 +66,7 @@ namespace SLaks.Ref12.Services {
 					// AssemblyName; ProjectIndex; DependentAssemblies
 					var assemblies = new HashSet<string>(
 						assemblyList.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)
+									.Where(s => !s.Contains(";-1;"))
 									.Select(s => s.Remove(s.IndexOf(';')))
 					);
 
