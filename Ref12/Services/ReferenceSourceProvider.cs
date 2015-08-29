@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.NetworkInformation;
 using System.Security.Cryptography;
@@ -60,7 +61,14 @@ namespace SLaks.Ref12.Services {
 			foreach (var url in urls) {
 				string assemblyList;
 				try {
-					using (var http = new HttpClient(new HttpClientHandler { UseDefaultCredentials = true }))
+					var handler = new HttpClientHandler();
+					handler.Proxy = WebRequest.GetSystemWebProxy();
+					if (handler.Proxy != null)
+					{
+						handler.Proxy.Credentials = CredentialCache.DefaultNetworkCredentials;
+					}
+
+					using (var http = new HttpClient(handler))
 						assemblyList = await http.GetStringAsync(url + "/assemblies.txt");
 					// Format:
 					// AssemblyName; ProjectIndex; DependentAssemblies
