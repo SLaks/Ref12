@@ -61,15 +61,16 @@ namespace SLaks.Ref12.Services {
 			foreach (var url in urls) {
 				string assemblyList;
 				try {
-					var handler = new HttpClientHandler();
-					handler.Proxy = WebRequest.GetSystemWebProxy();
-					if (handler.Proxy != null)
-					{
-						handler.Proxy.Credentials = CredentialCache.DefaultNetworkCredentials;
+					using (var handler = new HttpClientHandler()) {
+						handler.Proxy = WebRequest.GetSystemWebProxy();
+						if (handler.Proxy != null) {
+							handler.Proxy.Credentials = CredentialCache.DefaultNetworkCredentials;
+						}
+
+						using (var http = new HttpClient(handler, false))
+							assemblyList = await http.GetStringAsync(url + "/assemblies.txt");
 					}
 
-					using (var http = new HttpClient(handler))
-						assemblyList = await http.GetStringAsync(url + "/assemblies.txt");
 					// Format:
 					// AssemblyName; ProjectIndex; DependentAssemblies
 					var assemblies = new HashSet<string>(
