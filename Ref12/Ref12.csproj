@@ -1,20 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <!-- Default to VS2010 if not in a newer version -->
-  <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' ">
-    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
-  </PropertyGroup>
-  <!-- This is needed to prevent forced migrations when opening the project in Vs2012 -->
-  <PropertyGroup Condition=" '$(VisualStudioVersion)' == '11.0' ">
-    <MinimumVisualStudioVersion>11.0</MinimumVisualStudioVersion>
-  </PropertyGroup>
-  <!-- This is needed to prevent forced migrations when opening the project in Vs2013 -->
-  <PropertyGroup Condition=" '$(VisualStudioVersion)' == '12.0' ">
-    <MinimumVisualStudioVersion>12.0</MinimumVisualStudioVersion>
-  </PropertyGroup>
-  <!-- This is needed to prevent forced migrations when opening the project in Dev14 -->
-  <PropertyGroup Condition=" '$(VisualStudioVersion)' == '14.0' ">
-    <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
+  <PropertyGroup Condition="'$(VisualStudioVersion)' != ''">
+    <!-- This is added to prevent forced migrations in Visual Studio 2012 and newer -->
+    <MinimumVisualStudioVersion>$(VisualStudioVersion)</MinimumVisualStudioVersion>
   </PropertyGroup>
   <PropertyGroup>
     <!-- Look for the SDK specific to the current version of Visual Studio -->
