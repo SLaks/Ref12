@@ -1,35 +1,28 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Vsix Version="1.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2010">
-	<Identifier Id="SLaks-Ref12-086C4CE4-7061-4B1F-BC77-B64E4ED71B8E">
-		<Name>Ref12</Name>
-		<Author>SLaks</Author>
-		<Version>4.3</Version>
-		<Description xml:space="preserve">Forwards F12 to ReferenceSource.Microsoft.com instead of showing metadata.</Description>
+<PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
+	<Metadata>
+		<Identity Id="SLaks-Ref12-086C4CE4-7061-4B1F-BC77-B64E4ED71B8E" Version="4.4" Language="en-US" Publisher="SLaks" />
+		<DisplayName>Ref12</DisplayName>
+		<Description>Forwards F12 to ReferenceSource.Microsoft.com instead of showing metadata.</Description>
+		<MoreInfo>https://github.com/SLaks/Ref12</MoreInfo>
+		<ReleaseNotes>https://github.com/SLaks/Ref12/releases</ReleaseNotes>
 		<Icon>Resources\Ref12-32.png</Icon>
-		<PreviewImage>Resources\Ref12-200.png</PreviewImage>
-		<MoreInfoUrl>https://github.com/SLaks/Ref12</MoreInfoUrl>
-		<Locale>1033</Locale>
-		<SupportedFrameworkRuntimeEdition MinVersion="4.5" MaxVersion="6.0"/>
-		<SupportedProducts>
-			<VisualStudio Version="10.0">
-				<Edition>Pro</Edition>
-			</VisualStudio>
-			<VisualStudio Version="11.0">
-				<Edition>Pro</Edition>
-			</VisualStudio>
-			<VisualStudio Version="12.0">
-				<Edition>Pro</Edition>
-			</VisualStudio>
-			<VisualStudio Version="14.0">
-				<Edition>Pro</Edition>
-			</VisualStudio>
-			<VisualStudio Version="15.0">
-				<Edition>Pro</Edition>
-			</VisualStudio>
-		</SupportedProducts>
-	</Identifier>
-	<Content>
-		<MefComponent>|%CurrentProject%|</MefComponent>
-		<VsPackage>|%CurrentProject%;PkgdefProjectOutputGroup|</VsPackage>
-	</Content>
-</Vsix>
+		<PreviewImage>Resources\Screenshot.png</PreviewImage>
+		<Tags>C#, VB.Net, Reference Source, Source, Roslyn</Tags>
+	</Metadata>
+	<Installation>
+		<InstallationTarget Version="[12.0,16.0)" Id="Microsoft.VisualStudio.Community" />
+		<InstallationTarget Version="[12.0,16.0)" Id="Microsoft.VisualStudio.Enterprise" />
+	</Installation>
+	<Dependencies>
+		<Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.5,)" />
+	</Dependencies>
+	<Prerequisites>
+		<Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor" Version="[15.0,16.0)" DisplayName="Visual Studio core editor" />
+		<Prerequisite Id="Microsoft.VisualStudio.Component.Roslyn.Compiler" Version="[15.0.25904.2,16.0)" DisplayName="C# and Visual Basic Roslyn compilers" />
+	</Prerequisites>
+	<Assets>
+		<Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="Project" d:ProjectName="%CurrentProject%" Path="|%CurrentProject%|" />
+		<Asset Type="Microsoft.VisualStudio.VsPackage" d:Source="Project" d:ProjectName="%CurrentProject%" Path="|%CurrentProject%;PkgdefProjectOutputGroup|" />
+	</Assets>
+</PackageManifest>

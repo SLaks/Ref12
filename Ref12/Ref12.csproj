@@ -113,6 +113,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Resources\Screenshot.png">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <VSCTCompile Include="Ref12.vsct">
       <ResourceName>Menus.ctmenu</ResourceName>
     </VSCTCompile>
