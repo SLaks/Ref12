@@ -31,11 +31,7 @@ namespace SLaks.Ref12.Commands {
 				resolvers.Add("Basic", CreateRoslynResolver());
 			} else {
 				resolvers.Add("Basic", new VBResolver());
-
-				if (dte.Version == "12.0")
-					resolvers.Add("CSharp", new CSharp12Resolver());
-				else
-					resolvers.Add("CSharp", new CSharp10Resolver(dte));
+				resolvers.Add("CSharp", new CSharp12Resolver());
 			}
 		}
 		// This reference cannot be JITted in VS2012, so I need to wrap it in a separate method.
@@ -62,7 +58,7 @@ namespace SLaks.Ref12.Commands {
 		}
 
 		protected override bool IsEnabled() {
-			return false;	// Always pass through to the native check
+			return false;   // Always pass through to the native check
 		}
 	}
 }

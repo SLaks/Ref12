@@ -95,10 +95,6 @@ namespace Ref12.Tests {
 			var docService = componentModel.GetService<ITextDocumentFactoryService>();
 			ITextDocument document;
 			Assert.IsTrue(docService.TryGetTextDocument(metadataTextView.TextDataModel.DocumentBuffer, out document));
-			if (!RoslynUtilities.IsRoslynInstalled(VsIdeTestHostContext.ServiceProvider)) {
-				var symbol = new CSharp10Resolver(DTE).GetSymbolAt(document.FilePath, metadataTextView.FindSpan("public LogStore(SafeFileHandle").End);
-				Assert.IsNull(symbol);	// CSharp10Resolver cannot get a Compilation for metadata as source, but must not crash.
-			}
 			ISymbolResolver resolver = null;
 			if (RoslynUtilities.IsRoslynInstalled(VsIdeTestHostContext.ServiceProvider))
 				resolver = new RoslynSymbolResolver();
@@ -118,14 +114,6 @@ namespace Ref12.Tests {
 				Assert.Inconclusive("Roslyn is not installed");
 
 			await TestCSharpResolver(new RoslynSymbolResolver());
-		}
-
-		[TestMethod]
-		public async Task CSharp10ResolverTest() {
-			if (RoslynUtilities.IsRoslynInstalled(VsIdeTestHostContext.ServiceProvider))
-				Assert.Inconclusive("Cannot test native language services with Roslyn installed?");
-
-			await TestCSharpResolver(new CSharp10Resolver(DTE));
 		}
 		[TestMethod]
 		public async Task CSharp12ResolverTest() {
