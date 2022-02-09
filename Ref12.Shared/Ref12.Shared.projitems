@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>e8586b02-891e-4bb1-9842-f9099623dfba</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>Ref12.Shared</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Commands\CommandTargetBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Commands\GoToDefinitionInterceptor.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Commands\GoToDefintionNativeCommand.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Commands\TextViewListener.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ref12Package.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RoslynAssemblyRedirector.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RoslynUtilities.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\CSharp12Resolver.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\CSharpLanguageUtilities.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\ILogger.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\IndexIdTranslator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\ReferenceSourceProvider.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\RoslynSymbolResolver.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\RQNameTranslator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\VsLogger.cs" />
+  </ItemGroup>
+</Project>

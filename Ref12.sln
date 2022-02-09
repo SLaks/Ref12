@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.30219.0
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ref12", "Ref12\Ref12.csproj", "{0E2EB598-A14C-4A30-806F-CEB328654F37}"
 EndProject
@@ -15,9 +15,16 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ref12.Unversioned", "Ref12.Unversioned\Ref12.Unversioned.csproj", "{6677656D-FC7E-4C05-BA25-510019A9E73D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ref12.Roslyn", "Ref12.Roslyn\Ref12.Roslyn.csproj", "{97207070-034E-4D35-A0B6-45326A5A4249}"
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Ref12.Shared", "Ref12.Shared\Ref12.Shared.shproj", "{E8586B02-891E-4BB1-9842-F9099623DFBA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ref12.2022", "Ref12.2022\Ref12.2022.csproj", "{D9101319-7DEA-4FFA-8DB6-5550D829DDA5}"
 EndProject
 Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		Ref12.Shared\Ref12.Shared.projitems*{0e2eb598-a14c-4a30-806f-ceb328654f37}*SharedItemsImports = 4
+		Ref12.Shared\Ref12.Shared.projitems*{d9101319-7dea-4ffa-8db6-5550d829dda5}*SharedItemsImports = 4
+		Ref12.Shared\Ref12.Shared.projitems*{e8586b02-891e-4bb1-9842-f9099623dfba}*SharedItemsImports = 13
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -35,12 +42,15 @@ Global
 		{6677656D-FC7E-4C05-BA25-510019A9E73D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6677656D-FC7E-4C05-BA25-510019A9E73D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6677656D-FC7E-4C05-BA25-510019A9E73D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{97207070-034E-4D35-A0B6-45326A5A4249}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{97207070-034E-4D35-A0B6-45326A5A4249}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{97207070-034E-4D35-A0B6-45326A5A4249}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{97207070-034E-4D35-A0B6-45326A5A4249}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D9101319-7DEA-4FFA-8DB6-5550D829DDA5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D9101319-7DEA-4FFA-8DB6-5550D829DDA5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D9101319-7DEA-4FFA-8DB6-5550D829DDA5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D9101319-7DEA-4FFA-8DB6-5550D829DDA5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {FF704797-4FA6-4590-A892-40050E7D197C}
 	EndGlobalSection
 EndGlobal

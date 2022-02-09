@@ -20,7 +20,7 @@ namespace SLaks.Ref12.Services {
 	[Export(typeof(IReferenceSourceProvider))]
 	public class RoslynReferenceSourceProvider : ReferenceSourceProvider {
 		[ImportingConstructor]
-		public RoslynReferenceSourceProvider(ILogger logger) : base(logger, "http://index", "https://roslynsourceindex.azurewebsites.net") {
+		public RoslynReferenceSourceProvider(ILogger logger) : base(logger, "http://index", "https://sourceroslyn.io") {
 		}
 	}
 	[Export(typeof(IReferenceSourceProvider))]

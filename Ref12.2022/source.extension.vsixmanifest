@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
+    <Metadata>
+        <Identity Id="SLaks-Ref12-086C4CE4-7061-4B1F-BC77-B64E4ED71B8F" Version="5.0.0" Language="en-US" Publisher="SLaks" />
+        <DisplayName>Ref12</DisplayName>
+        <Description xml:space="preserve">Forwards F12 to ReferenceSource.Microsoft.com instead of showing metadata.</Description>
+        <MoreInfo>https://github.com/SLaks/Ref12</MoreInfo>
+        <ReleaseNotes>https://github.com/SLaks/Ref12/releases</ReleaseNotes>
+        <Icon>Resources\Ref12-200.png</Icon>
+        <PreviewImage>Resources\Screenshot.png</PreviewImage>
+        <Tags>C#, VB.Net, Reference Source, Source, Roslyn</Tags>
+    </Metadata>
+    <Installation>
+        <InstallationTarget Version="[17.0,)" Id="Microsoft.VisualStudio.Community">
+            <ProductArchitecture>amd64</ProductArchitecture>
+        </InstallationTarget>
+        <InstallationTarget Version="[17.0,)" Id="Microsoft.VisualStudio.Pro">
+            <ProductArchitecture>amd64</ProductArchitecture>
+        </InstallationTarget>
+        <InstallationTarget Version="[17.0,)" Id="Microsoft.VisualStudio.Enterprise">
+            <ProductArchitecture>amd64</ProductArchitecture>
+        </InstallationTarget>
+    </Installation>
+    <Dependencies>
+        <Dependency d:Source="Manual" DisplayName="Microsoft .NET Framework" Id="Microsoft.Framework.NDP" Version="[4.7.2,)" />
+    </Dependencies>
+    <Prerequisites>
+        <Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor" Version="[17.0,)" DisplayName="Visual Studio core editor" />
+        <Prerequisite Id="Microsoft.VisualStudio.Component.Roslyn.Compiler" Version="[17.0,)" DisplayName="C# and Visual Basic Roslyn compilers" />
+    </Prerequisites>
+    <Assets>
+        <Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="Project" d:ProjectName="%CurrentProject%" Path="|%CurrentProject%|" />
+        <Asset Type="Microsoft.VisualStudio.VsPackage" d:Source="Project" d:ProjectName="%CurrentProject%" Path="|%CurrentProject%;PkgdefProjectOutputGroup|" />
+    </Assets>
+</PackageManifest>
